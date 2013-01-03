@@ -2,5 +2,6 @@
   "ENV": "local",
   "HOST": "localhost",
   "NODE_PORT": "17002",
-  "HOST_PORT": "17002"
+  "HOST_PORT": "17002",
+  "MONGODB": "mongodb://localhost:27017/africa-football-2013"
 }

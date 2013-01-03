@@ -19,7 +19,7 @@ _.each(config,function(value,key) {
 
 // heroku passes the PORT and MONGOHQ_URL env variables
 if (typeof process.env['PORT'] != 'undefined') config['NODE_PORT'] = process.env['PORT'];
-//if (typeof process.env['MONGOHQ_URL'] != 'undefined') config['MONGODB'] = process.env['MONGOHQ_URL'];
+if (typeof process.env['MONGOHQ_URL'] != 'undefined') config['MONGODB'] = process.env['MONGOHQ_URL'];
 
 /* if we have a router (like on heroku) or nginx between the client and node, the port on which we access
  the app might be different than the port on which node listen's (ex: on heroku, the client is on port 80),
@@ -45,5 +45,5 @@ exports.config = exportedConfig;
 
 
 exports.getConfig = function(cb) {
-  return cb(null, config);
+ return cb(null, config);
 };
