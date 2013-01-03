@@ -32,7 +32,13 @@ require('./config').getConfig(function(err, config) {
   
 
   app.get('/calendar', function(req, res){
-    res.sendfile('data/calendar.json', {maxAge:180000});
+    if (!req.query || !req.query.callback){
+      req.query.callback = 'callback';
+    }
+    fs.readFile('data/calendar.json','utf-8', function(err, data){
+      res.jsonp(data);
+    });
+    
   });
 
   app.get('/', function(req, res){
@@ -72,4 +78,6 @@ require('./config').getConfig(function(err, config) {
   server.listen(parseInt(global.platform_config.NODE_PORT,10),function() {
     console.log('Server listening on port %d in %s mode', server.address().port, app.settings.env);
   });
+
+
 });
