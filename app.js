@@ -42,7 +42,10 @@ require('./config').getConfig(function(err, config) {
     });
 
     
-
+    /**
+    * GET /fixtures
+    * List all fixtures
+    **/
     app.get('/fixtures', function(req, res){
       if (!req.query || !req.query.callback){
         req.query.callback = 'callback';
@@ -61,8 +64,36 @@ require('./config').getConfig(function(err, config) {
       
     });
 
+
+    /**
+    * GET /players
+    * List all players
+    **/
+    app.get('/players', function(req, res){
+      if (!req.query || !req.query.callback){
+        req.query.callback = 'callback';
+      }
+      
+      db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}, function(err, players){
+        if (err){
+          return res.status(500).jsonp('An error occured : '+err);
+        }
+        if (!players || !players.length){
+          return res.status(404).jsonp('Error : No results');
+        }
+        res.jsonp(players);
+      });
+
+      
+    });
+
     
-    /*Admin */
+    /*
+    * GET /admin/fixtures
+    * Edit/Delete existing fixtures
+    * Create new fixture
+    **/
+
     app.get('/admin/fixtures', function(req, res){
 
       db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
@@ -71,6 +102,20 @@ require('./config').getConfig(function(err, config) {
 
 
     });
+    /*
+    * GET /admin/players
+    * Edit/Delete existing players
+    * Create new player
+    **/
+    app.get('/admin/players', function(req, res){
+
+      db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}, function(err, players){
+        res.render('players.ejs', {err:err, players:players});
+      });
+
+
+    });
+
 
     app.post('/fixtures/new', function(req, res){
 
@@ -80,6 +125,23 @@ require('./config').getConfig(function(err, config) {
           return res.status(500).send(err);
         }
         return res.json(fixture);
+      });
+
+    });
+
+
+    /*
+    * POST /players/new
+    * Register new player
+    **/
+     app.post('/players/new', function(req, res){
+
+      var player = new db.Player(req.body);
+      player.save(function(err){
+        if (err){
+          return res.status(500).send(err);
+        }
+        return res.json(player);
       });
 
     });

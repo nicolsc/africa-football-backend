@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Players</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		$('#btn-new').on('click', function(evt){
+	    		var params = {};
+          $('#new-player input[type=text]').each(function(idx, item){
+            params[item.id] = item.value;
+          });
+	    		$.ajax({type:'POST', url:'/players/new', data:params, dataType:'json', success:function(result){
+            $('#result').removeClass('error').addClass('success').html('Success - player id : '+result._id).show().fadeOut(3000);
+            refresh();
+	    		}, error:function(err){
+            console.log('err', err);
+	    			$('#result').addClass('error').removeClass('success').html('Error - '+err).show().fadeOut(3000);
+	    		}});
+	    	});
+    	});
+      function refresh(){
+        $.ajax({type:'GET', url:'/players', dataType:'jsonp', success:function(result){
+          console.log('success', result);
+          $('tbody tr.player').remove();
+          result.reverse().forEach(function(item, idx){
+            $('tbody').prepend(playerTpl(item, result.length-idx));
+          });
+
+        }, error:function(err){
+          console.log('err', err);
+        }});
+      }
+      function playerTpl(player, index){
+        if (!player){
+          return "";
+        }
+        return "<tr class='player'><td>"+player.team+".</td><td>"+player.number+"</td><td>"+player.name+"</td><td>"+player.firstname+"</td><td>"+player.position+"</td><td>"+(player.dob && new Date(player.dob).toLocaleString())+"</td><td>"+player.club+"</td><td><input type='button' value='X' class='btn-del' />&nbsp;<input type='button' value='edit' class='btn-edit' /></td></tr>";
+      }
+    </script>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>2013 players</h1>
+    <div id="result"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>#</th>
+          <th>Name</th>
+          <th>First name</th>
+          <th>Position</th>
+          <th>D.o.b</th>
+          <th>Club</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+    <% players.forEach(function(player, idx){
+      %>
+        <tr class='player'>
+          <td><%=player.team%></td>
+          <td><%=player.number%>.</td>
+          <td><%=player.name%></td>
+          <td><%=player.firstname%></td>
+          <td><%=player.position%></td>
+          <td><%=player.dob && player.dob.toLocaleString()%></td>
+          <td><%=player.club%></td>
+          <td><input type="button" value="X" class="btn-del" />&nbsp;<input type="button" value="edit" class="btn-edit" /></td>
+        </tr>
+
+    <%}); %>
+        <tr id="new-player">
+          <td><input type="text" id="team" /></td>
+          <td><input type="text" id="number" /></td>
+          <td><input type="text" id="name" /></td>
+          <td><input type="text" id="firstname" /></td>
+          <td><input type="text" id="position" /></td>
+          <td><input type="text" id="dob" /></td>
+          <td><input type="text" id="club" /></td>
+          <td><input type="button" id="btn-new" value="Add"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <form>
+    	
+		  
+		  
+
+    	
+    </form>
+  </body>
+</html>

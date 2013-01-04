@@ -12,6 +12,15 @@ exports.getDb = function(cb){
 			place:String,
 			details:String,
 			stage:String
+		}),
+		player: new mongoose.Schema({
+			team:String,
+			firstname:String,
+			name:String,
+			position:String,
+			dob:Date,
+			club:String,
+			number:Number
 		})
 	};
 
@@ -21,6 +30,7 @@ exports.getDb = function(cb){
 
 	var db = {
 		Fixture: mongoose.model('Fixture',schemas.fixture),
+		Player: mongoose.model('Player', schemas.player),
 		mongoose:mongoose
 	};
 
