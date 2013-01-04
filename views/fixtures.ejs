@@ -57,14 +57,14 @@
         </tr>
       </thead>
       <tbody>
-    <% fixtures.forEach(function(fixture, idx){
+    <% fixtures && fixtures.forEach(function(fixture, idx){
       %>
         <tr class='fixture'>
           <td><%=idx+1%>.</td>
           <td><%=fixture.stage%></td>
           <td><%=fixture.team1%></td>
           <td><%=fixture.team2%></td>
-          <td><%=fixture.date.toLocaleString()%></td>
+          <td><%=fixture.date && fixture.date.toLocaleString()%></td>
           <td><%=fixture.score%></td>
           <td><input type="button" value="X" class="btn-del" />&nbsp;<input type="button" value="edit" class="btn-edit" /></td>
         </tr>
@@ -81,13 +81,5 @@
         </tr>
       </tbody>
     </table>
-
-    <form>
-    	
-		  
-		  
-
-    	
-    </form>
   </body>
 </html>
