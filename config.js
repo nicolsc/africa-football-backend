@@ -1,12 +1,11 @@
-// Priority order is defaults | config.json | process.env
-
+console.log('welcome to config');
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore')._;
 var url = require('url');
 
 var config = JSON.parse(fs.readFileSync(path.resolve(__dirname, './config.defaults.json'), 'utf-8').replace('\n', '').replace(/\/\*[\s\S]*?\*\//g,""));
-
+/*
 try {
   var json = JSON.parse(fs.readFileSync(path.resolve(__dirname, './config.json'), 'utf-8').replace('\n', '').replace(/\/\*[\s\S]*?\*\//g,""));
 } catch (e) {
@@ -15,7 +14,7 @@ try {
 
 _.each(config,function(value,key) {
   if (typeof json[key] != 'undefined') config[key] = json[key];
-});
+});*/
 
 // heroku passes the PORT and MONGOHQ_URL env variables
 console.log('env', process.env);
@@ -28,11 +27,6 @@ if (typeof process.env['MONGOHQ_URL'] != 'undefined') config['MONGODB'] = proces
  accesses node directly */
 config.HOSTPORT = config.HOST+((parseInt(config.HOST_PORT,10)!=80)?":"+config.HOST_PORT:"");
 
-// provide a way to force local env, to enable test routes on Heroku
-config['FORCE_ASSERT_LOCAL_ENV'] = (typeof process.env['ONEGAME_FORCE_ASSERT_LOCAL_ENV'] != 'undefined');
-if (config['FORCE_ASSERT_LOCAL_ENV']) {
-  console.log("WARNING: forcing local env. This should not be used for anything else than testing.");
-}
 
 // export non sensible data (used in tests)
 var exportedConfig = [];
