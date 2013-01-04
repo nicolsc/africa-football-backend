@@ -37,16 +37,18 @@ require('./config').getConfig(function(err, config) {
       app.use(express.cookieParser());
       app.use(express.methodOverride());
       app.use(express.static('public'));
+      app.engine('html', require('ejs').renderFile);
+
     });
 
     
 
-    app.get('/calendar', function(req, res){
+    app.get('/fixtures', function(req, res){
       if (!req.query || !req.query.callback){
         req.query.callback = 'callback';
       }
       
-      db.Fixture.find({}, function(err, fixtures){
+      db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
         if (err){
           return res.status(500).jsonp('An error occured : '+err);
         }
@@ -61,15 +63,18 @@ require('./config').getConfig(function(err, config) {
 
     
     /*Admin */
-    app.get('/admin/fixtures/new', function(req, res){
+    app.get('/admin/fixtures', function(req, res){
 
-      res.sendfile('admin/new-fixture.html');
+      db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
+        res.render('fixtures.ejs', {err:err, fixtures:fixtures});
+      });
+
 
     });
 
     app.post('/fixtures/new', function(req, res){
 
-      var fixture = db.Fixture({team1:req.param('team1'), team2:req.param('team2'), date:req.param('date')});
+      var fixture = new db.Fixture(req.body);
       fixture.save(function(err){
         if (err){
           return res.status(500).send(err);

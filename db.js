@@ -10,7 +10,8 @@ exports.getDb = function(cb){
 			team2:String,
 			score:String,
 			place:String,
-			details:String
+			details:String,
+			stage:String
 		})
 	};
 
