@@ -1,4 +1,3 @@
-console.log('welcome to config');
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore')._;
@@ -17,7 +16,7 @@ _.each(config,function(value,key) {
 });*/
 
 // heroku passes the PORT and MONGOHQ_URL env variables
-console.log('env', process.env);
+console.log('env.MONGOHQ_URL', process.env.MONGOHQ_URL);
 if (typeof process.env['PORT'] != 'undefined') config['NODE_PORT'] = process.env['PORT'];
 if (typeof process.env['MONGOHQ_URL'] != 'undefined') config['MONGODB'] = process.env['MONGOHQ_URL'];
 

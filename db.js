@@ -24,8 +24,11 @@ exports.getDb = function(cb){
 		})
 	};
 
-	schemas.fixture.methods.dump = function(){
-		return JSON.stringify({team1:this.team1});
+	schemas.player.dump = function(){
+		return {
+			name:this.firstname ? this.firstname.substring(0,1)+'.' : '' + this.name,
+			description: (this.position ? "Pos.: "+this.position+'\n' : '') + (this.club ? "Club: "+this.club : '')
+		};
 	};
 
 	var db = {

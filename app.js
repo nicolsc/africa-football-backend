@@ -58,7 +58,13 @@ require('./config').getConfig(function(err, config) {
         if (!fixtures || !fixtures.length){
           return res.status(404).jsonp('Error : No results');
         }
-        res.jsonp(fixtures);
+        var data = [];
+
+        _.each(fixtures, function(item){
+          data.push(_.extend(item,schemaIO.fixture(item)));
+        });
+
+        res.jsonp(data);
       });
 
       
@@ -74,14 +80,20 @@ require('./config').getConfig(function(err, config) {
         req.query.callback = 'callback';
       }
       
-      db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}, function(err, players){
+      db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}).exec(function(err, players){
         if (err){
           return res.status(500).jsonp('An error occured : '+err);
         }
         if (!players || !players.length){
           return res.status(404).jsonp('Error : No results');
         }
-        res.jsonp(players);
+        var data = [];
+
+        _.each(players, function(item){
+          data.push(schemaIO.player(item));
+        });
+
+        res.jsonp(data);
       });
 
       
@@ -151,7 +163,7 @@ require('./config').getConfig(function(err, config) {
     });
 
     var fourofour = function(req, res){
-          res.status(404);
+      res.status(404);
 
       // respond with html page
       if (req.accepts('html')) {
@@ -167,6 +179,48 @@ require('./config').getConfig(function(err, config) {
 
       // default to plain-text. send()
       res.type('txt').send('Not found');
+    };
+
+    var schemaIO = {
+      fixture:function(fix){
+        var article = {};
+        article.name = fix.team1 + ' - '+fix.team2;
+        if (fix.score){
+          article.name += ' '+fix.score;
+        }
+        if (fix.date){
+          article.dateCreated = fix.date;
+        }
+        article.description = fix.stage;
+
+        return article;
+      },
+      player:function(p){
+         var article = {};
+         article.familyname = ''+p.name;
+        article.name = (p.firstname && p.firstname.length ? p.firstname.substring(0,1)+'.':'' )+ p.name;
+        article.description = '';
+        if (p.number){
+          article.description += '#'+p.number+'. ';
+        }
+        if (p.position){
+          article.description += '('+p.position+')';
+        }
+        if (p.club){
+          article.description += ", "+p.club;
+        }
+
+        article.dateCreated = p.dob;
+
+        /* still need them..*/
+        article.position = p.position;
+        article.club = p.club;
+        article.number = p.number;
+        article._id = p.id;
+        
+        return article;
+      }
+
     };
 
     app.use(function(req, res, next){
