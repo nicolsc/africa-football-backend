@@ -36,7 +36,7 @@
         if (!fixture){
           return "";
         }
-        return "<tr class='fixture'><td>"+index+".</td><td>"+fixture.stage+"</td><td>"+fixture.team1+"</td><td>"+fixture.team2+"</td><td>"+new Date(fixture.date).toLocaleString()+"</td><td>"+fixture.score+"</td><td><input type='button' value='X' class='btn-del' />&nbsp;<input type='button' value='edit' class='btn-edit' /></td></tr>";
+        return "<tr class='fixture'><td>"+index+".</td><td>"+fixture.stage+"</td><td>"+fixture.team1+"</td><td>"+fixture.team2+"</td><td>"+new Date(fixture.startDate).toLocaleString()+"</td><td>"+fixture.score+"</td><td><input type='button' value='X' class='btn-del' />&nbsp;<input type='button' value='edit' class='btn-edit' /></td></tr>";
       }
     </script>
     <link rel="stylesheet" href="/css/style.css" />

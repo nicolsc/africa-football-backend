@@ -61,7 +61,7 @@ require('./config').getConfig(function(err, config) {
         var data = [];
 
         _.each(fixtures, function(item){
-          data.push(_.extend(item,schemaIO.fixture(item)));
+          data.push(schemaIO.fixture(item));
         });
 
         res.jsonp(data);
@@ -189,9 +189,16 @@ require('./config').getConfig(function(err, config) {
           article.name += ' '+fix.score;
         }
         if (fix.date){
-          article.dateCreated = fix.date;
+          article.startDate = fix.date;
         }
         article.description = fix.stage;
+
+        /* still need them */
+        article.stage = fix.stage;
+        article.team1 = fix.team1;
+        article.team2 = fix.team2;
+        article.score = fix.score;
+
 
         return article;
       },
