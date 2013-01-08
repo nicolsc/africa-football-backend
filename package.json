@@ -13,6 +13,7 @@
   "private":true,
   "contributors": [],
   "dependencies": {
+    "dateformat":"1.0.4-1.2.3",
     "ejs":"0.8.x",
     "express": "3.0.x",
     "mongoose": "3.1.2",
