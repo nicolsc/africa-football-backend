@@ -53,10 +53,10 @@ require('./config').getConfig(function(err, config) {
       
       db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
         if (err){
-          return res.status(500).jsonp('An error occured : '+err);
+          return res.status(500).jsonp({msg:'An error occured : '+err});
         }
         if (!fixtures || !fixtures.length){
-          return res.status(404).jsonp('Error : No results');
+          return res.status(404).jsonp({msg:'Error : No results'});
         }
         var data = [];
 
@@ -82,10 +82,10 @@ require('./config').getConfig(function(err, config) {
       
       db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}).exec(function(err, players){
         if (err){
-          return res.status(500).jsonp('An error occured : '+err);
+          return res.status(500).jsonp({msg:'An error occured : '+err});
         }
         if (!players || !players.length){
-          return res.status(404).jsonp('Error : No results');
+          return res.status(404).jsonp({msg:'Error : No results'});
         }
         var data = [];
 
@@ -109,8 +109,15 @@ require('./config').getConfig(function(err, config) {
     app.get('/admin/fixtures', function(req, res){
 
       db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
-        res.render('fixtures.ejs', {err:err, fixtures:fixtures});
+        var data=[];
+        _.each(fixtures, function(item){
+          data.push(schemaIO.fixture(item));
+        });
+
+        res.render('fixtures.ejs', {err:err, fixtures:data});
       });
+
+
 
 
     });
@@ -128,25 +135,87 @@ require('./config').getConfig(function(err, config) {
 
     });
 
-
-    app.post('/fixtures/new', function(req, res){
+    /**
+    * POST /fixtures
+    */
+    app.post('/fixtures', function(req, res){
 
       var fixture = new db.Fixture(req.body);
       fixture.save(function(err){
         if (err){
-          return res.status(500).send(err);
+          return res.status(500).json({msg:err});
         }
         return res.json(fixture);
       });
 
     });
 
+    /**
+    * GET /fixtures/:id
+    **/
+    app.get('/fixtures/:id', function(req, res){
+      if (!req.params || !req.params.id){
+        res.status(400).json({'msg':'Missing param `id`'});
+      }
+      db.Fixture.findOne({_id:req.params.id}, function (err, doc){
+        if (err){
+          return res.status(500).json({msg:'Unexpected error while retrieving document: '+err});
+        }
+        if (!doc){
+          return res.status(404).json({msg:'Document not found'});
+        }
+        res.jsonp(schemaIO.fixture(doc));
+      });
+    });
+
+    /**
+    * DELETE /fixtures/:id
+    **/
+    app.delete('/fixtures/:id', function(req, res){
+      if (!req.params || !req.params.id){
+        res.status(400).json({'msg':'Missing param `id`'});
+      }
+      db.Fixture.remove({_id:req.params.id}).exec(function(err, num){
+        if (err){
+          return res.status(500).json({msg:'Unexpected error while removing document : '+err});
+        }
+        if (!num){
+          return res.status(404).json({msg:'Zero documents affected'});
+        }
+        res.json({msg:num+' documents removed'});
+      });
+    });
+    /**
+    * PUT /fixtures/:id
+    **/
+    app.put('/fixtures/:id', function(req, res){
+      console.log('PUT', req.params.id);
+      if (!req.params || !req.params.id){
+        res.status(400).json({'msg':'Missing param `id`'});
+      }
+      db.Fixture.findOne({_id:req.params.id}, function (err, doc){
+        if (err){
+          return res.status(500).json({msg:'Unexpected error while updating document: '+err});
+        }
+        if (!doc){
+          return res.status(404).json({msg:'Document not found'});
+        }
+        console.log('params', req.body);
+        _.each(req.body, function(val, key){
+          doc[key] = val;
+        });
+        doc.save();
+        res.json(schemaIO.fixture(doc));
+
+      });
+    });
+
 
     /*
-    * POST /players/new
+    * POST /players
     * Register new player
     **/
-     app.post('/players/new', function(req, res){
+     app.post('/players', function(req, res){
 
       var player = new db.Player(req.body);
       player.save(function(err){
@@ -198,6 +267,7 @@ require('./config').getConfig(function(err, config) {
         article.team1 = fix.team1;
         article.team2 = fix.team2;
         article.score = fix.score;
+        article.id = fix._id;
 
 
         return article;

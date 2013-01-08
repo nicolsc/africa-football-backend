@@ -3,40 +3,113 @@
   <head>
     <meta charset="utf-8">
     <title>Fixtures</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
+    <script type="text/javascript" src="/js/jquery.js"></script>
     <script type="text/javascript">
     	$(document).ready(function(){
-    		$('#btn-new').on('click', function(evt){
+    		$('#fixtures').on('click', '#btn-add', function(evt){
 	    		var params = {};
           $('#new-fixture input[type=text]').each(function(idx, item){
             params[item.id] = item.value;
           });
-	    		$.ajax({type:'POST', url:'/fixtures/new', data:params, dataType:'json', success:function(result){
-            $('#result').removeClass('error').addClass('success').html('Success - Fixture id : '+result._id).show().fadeOut(3000);
-            refresh();
-	    		}, error:function(err){
-            console.log('err', err);
-	    			$('#result').addClass('error').removeClass('success').html('Error - '+err).show().fadeOut(3000);
-	    		}});
+          if ($('#new-fixture #id').val()){
+            params.id = $('#new-fixture #id').val();
+            return editFixture(params);
+          }
+          else{
+            return newFixture(params);  
+          }
+	    		
 	    	});
+        $('#fixtures').on('click', '.btn-del',function(evt){
+          deleteFixture($(evt.currentTarget).attr('data-id'));
+        });
+
+        $('#fixtures').on('click', '.btn-edit', function(evt){
+          //editFixture($(evt.currentTarget).attr('data-id'));
+          //feed 'new' form with this fixture info
+          var $newfix = $('#new-fixture');
+          var $current = $(evt.currentTarget.parentNode.parentNode);
+          
+          $('#id', $newfix).val($(evt.currentTarget).attr('data-id'));
+          $('#stage', $newfix).val($('.stage',$current).text());
+          $('#team1', $newfix).val($('.team1',$current).text());
+          $('#team2', $newfix).val($('.team2',$current).text());
+          $('#date', $newfix).val($('.date',$current).text());
+          $('#score', $newfix).val($('.score',$current).text());
+
+          $('#new-fixture #btn-add').val('Update');
+
+        });
+        $('#fixtures').on('click', '#btn-cancel', function(evt){
+          clear();
+        });
     	});
+
+      function newFixture(params){
+        $.ajax({type:'POST', url:'/fixtures', data:params, dataType:'json', success:function(result){
+            success('Success - Fixture id : '+result.id);
+            refresh();
+          }, error:function(err){
+            error(err.msg);
+          }
+        });
+      }
+      function deleteFixture(id){
+        $.ajax({type:'DELETE', url:'/fixtures/'+id, dataType:'json', success:function(result){
+            success('Success - '+result.msg);
+            refresh();
+          }, error:function(err){
+            error(err.msg);
+          }
+        });
+      }
+      function editFixture(params){
+        $.ajax({type:'PUT', url:'/fixtures/'+params.id, data:params,dataType:'json', success:function(result){
+          success('Edit fixture '+result.id);
+          refresh();
+        }});
+      }
+      function clear(){
+        $('#new-fixture input[type=text]').val('');
+        $('#new-fixture input[type=hidden]').val('');
+        $('#new-fixture #btn-add').val('Add');
+      }
       function refresh(){
         $.ajax({type:'GET', url:'/fixtures', dataType:'jsonp', success:function(result){
-          console.log('success', result);
           $('tbody tr.fixture').remove();
           result.reverse().forEach(function(item, idx){
             $('tbody').prepend(fixtureTpl(item, result.length-idx));
           });
 
         }, error:function(err){
-          console.log('err', err);
+          var msg = 'Error';
+          try{
+            var result = eval(err.responseText);
+            console.log(result);
+          }
+          catch (e){
+
+          }
+          error(err.msg);
+          console.log(err, err.statusCode)
+          if (err.status == 404){
+             $('tbody tr.fixture').remove();
+          }
         }});
       }
       function fixtureTpl(fixture, index){
         if (!fixture){
           return "";
         }
-        return "<tr class='fixture'><td>"+index+".</td><td>"+fixture.stage+"</td><td>"+fixture.team1+"</td><td>"+fixture.team2+"</td><td>"+new Date(fixture.startDate).toLocaleString()+"</td><td>"+fixture.score+"</td><td><input type='button' value='X' class='btn-del' />&nbsp;<input type='button' value='edit' class='btn-edit' /></td></tr>";
+        return "<tr class='fixture'><td>"+index+".</td><td class='stage'>"+fixture.stage+"</td><td class='team1'>"+fixture.team1+"</td><td class='team2'>"+fixture.team2+"</td><td class='date'>"+(fixture.startDate && new Date(fixture.startDate).toLocaleString())+"</td><td class='score'>"+fixture.score+"</td><td><input type='button' value='X' class='btn-del' data-id='"+fixture.id+"' />&nbsp;<input type='button' value='edit' class='btn-edit' data-id='"+fixture.id+"' /></td></tr>";
+      }
+      function success(msg){
+        $('#result').removeClass('error').addClass('success').html(msg).show().fadeOut(3000);
+        clear();
+      }
+      function error(msg){
+        $('#result').addClass('error').removeClass('success').html('Error - '+msg).show().fadeOut(3000);
       }
     </script>
     <link rel="stylesheet" href="/css/style.css" />
@@ -44,7 +117,7 @@
   <body>
     <h1>2013 Fixtures</h1>
     <div id="result"></div>
-    <table>
+    <table id="fixtures">
       <thead>
         <tr>
           <th>#</th>
@@ -61,23 +134,23 @@
       %>
         <tr class='fixture'>
           <td><%=idx+1%>.</td>
-          <td><%=fixture.stage%></td>
-          <td><%=fixture.team1%></td>
-          <td><%=fixture.team2%></td>
-          <td><%=fixture.date && fixture.date.toLocaleString()%></td>
-          <td><%=fixture.score%></td>
-          <td><input type="button" value="X" class="btn-del" />&nbsp;<input type="button" value="edit" class="btn-edit" /></td>
+          <td class='stage'><%=fixture.stage%></td>
+          <td class='team1'><%=fixture.team1%></td>
+          <td class='team2'><%=fixture.team2%></td>
+          <td class='date'><%=fixture.startDate && fixture.startDate.toLocaleString()%></td>
+          <td class='score'><%=fixture.score%></td>
+          <td><input type="button" value="X" class="btn-del" data-id="<%=fixture.id%>" />&nbsp;<input type="button" value="edit" class="btn-edit" data-id='<%=fixture.id%>' /></td>
         </tr>
 
     <%}); %>
         <tr id="new-fixture">
-          <td>&nbsp;</td>
+          <td>&nbsp;<input type="hidden" id="id" /></td>
           <td><input type="text" id="stage" /></td>
           <td><input type="text" id="team1" /></td>
           <td><input type="text" id="team2" /></td>
           <td><input type="text" id="date" /></td>
           <td><input type="text" id="score" /></td>
-          <td><input type="button" id="btn-new" value="Add"></td>
+          <td><input type="button" id="btn-add" value="Add">&nbsp;<input type="button" id="btn-cancel" value="Cancel"></td>
         </tr>
       </tbody>
     </table>
