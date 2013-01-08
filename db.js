@@ -22,6 +22,11 @@ exports.getDb = function(cb){
 			club:String,
 			number:Number,
 			image:String
+		}),
+		user:new mongoose.Schema({
+			name:String,
+			password:String,
+			admin:Boolean
 		})
 	};
 

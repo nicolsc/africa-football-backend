@@ -100,45 +100,7 @@ require('./config').getConfig(function(err, config) {
       
     });
 
-    
-    /*
-    * GET /admin/fixtures
-    * Edit/Delete existing fixtures
-    * Create new fixture
-    **/
 
-    app.get('/admin/fixtures', function(req, res){
-
-      db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
-        var data=[];
-        _.each(fixtures, function(item){
-          data.push(schemaIO.fixture(item));
-        });
-
-        res.render('fixtures.ejs', {err:err, fixtures:data});
-      });
-
-
-
-
-    });
-    /*
-    * GET /admin/players
-    * Edit/Delete existing players
-    * Create new player
-    **/
-    app.get('/admin/players', function(req, res){
-
-      db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}, function(err, players){
-        var data=[];
-        _.each(players, function(item){
-          data.push(schemaIO.player(item));
-        });
-        res.render('players.ejs', {err:err, players:data});
-      });
-
-
-    });
 
     /**
     * POST /fixtures
@@ -288,9 +250,69 @@ require('./config').getConfig(function(err, config) {
     });
 
 
+    /* admin area */
+    /**
+    * GET /login
+    * display login form
+    **/
+    app.get('/login', function(req, res){
+      res.render('login.ejs');
+    });
+
+    /**
+    * POST /login
+    * attempt to log in
+    **/
+    app.post('/login', function(req, res){
+      res.status(404).send();
+    });
+
+
+    /*
+    * GET /admin/fixtures
+    * Edit/Delete existing fixtures
+    * Create new fixture
+    **/
+
+    app.get('/admin/fixtures', function(req, res){
+
+      db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
+        var data=[];
+        _.each(fixtures, function(item){
+          data.push(schemaIO.fixture(item));
+        });
+
+        res.render('fixtures.ejs', {err:err, fixtures:data});
+      });
+
+
+
+
+    });
+    /*
+    * GET /admin/players
+    * Edit/Delete existing players
+    * Create new player
+    **/
+    app.get('/admin/players', function(req, res){
+
+      db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}, function(err, players){
+        var data=[];
+        _.each(players, function(item){
+          data.push(schemaIO.player(item));
+        });
+        res.render('players.ejs', {err:err, players:data});
+      });
+
+
+    });
+
     app.get('/', function(req, res){
       return fourofour(req,res);
     });
+
+
+    /* utils */
 
     var fourofour = function(req, res){
       res.status(404);
