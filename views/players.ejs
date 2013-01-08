@@ -41,7 +41,7 @@
           $('#club', $newplayer).val($('.club',$current).text());
           $('#dob', $newplayer).val($('.dob',$current).text());
 
-          $('#new-player #btn-add').val('Update');
+          $('#new-player #btn-add').text('Update');
 
         });
         $('#players').on('click', '#btn-cancel', function(evt){
@@ -76,7 +76,7 @@
       function clear(){
         $('#new-player input[type=text]').val('');
         $('#new-player input[type=hidden]').val('');
-        $('#new-player #btn-add').val('Add');
+        $('#new-player #btn-add').text('Add');
       }
       function refresh(){
         $.ajax({type:'GET', url:'/players', dataType:'jsonp', success:function(result){

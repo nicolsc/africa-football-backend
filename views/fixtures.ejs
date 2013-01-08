@@ -38,7 +38,7 @@
           $('#date', $newfix).val($('.date',$current).text());
           $('#score', $newfix).val($('.score',$current).text());
 
-          $('#new-fixture #btn-add').val('Update');
+          $('#new-fixture #btn-add').text('Update');
 
         });
         $('#fixtures').on('click', '#btn-cancel', function(evt){
@@ -73,7 +73,7 @@
       function clear(){
         $('#new-fixture input[type=text]').val('');
         $('#new-fixture input[type=hidden]').val('');
-        $('#new-fixture #btn-add').val('Add');
+        $('#new-fixture #btn-add').text('Add');
       }
       function refresh(){
         $.ajax({type:'GET', url:'/fixtures', dataType:'jsonp', success:function(result){
