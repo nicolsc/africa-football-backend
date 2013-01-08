@@ -7,6 +7,7 @@ var express = require('express'),
     fs = require('fs'),
     path = require("path"),
     request = require('request'),
+    dateformat=require('dateformat'),
     ObjectId = require('mongoose').Types.ObjectId;
 
 
@@ -320,7 +321,7 @@ require('./config').getConfig(function(err, config) {
         if (fix.date){
           article.startDate = fix.date;
         }
-        article.description = fix.stage;
+        article.description = dateformat(fix.date, 'dd/mm')+' - '+fix.stage;
 
         /* still need them */
         article.stage = fix.stage;
@@ -347,6 +348,7 @@ require('./config').getConfig(function(err, config) {
         }
 
         article.dateCreated = p.dob;
+        article.image = p.image;
 
         /* still need them..*/
         article.position = p.position;
@@ -356,6 +358,7 @@ require('./config').getConfig(function(err, config) {
         article.lastname = p.lastname;
         article.id = p.id;
         article.team = p.team;
+
         
         return article;
       }

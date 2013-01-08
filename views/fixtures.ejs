@@ -102,7 +102,7 @@
         if (!fixture){
           return "";
         }
-        return "<tr class='fixture'><td>"+index+".</td><td class='stage'>"+fixture.stage+"</td><td class='team1'>"+fixture.team1+"</td><td class='team2'>"+fixture.team2+"</td><td class='date'>"+(fixture.startDate && new Date(fixture.startDate).toLocaleString())+"</td><td class='score'>"+fixture.score+"</td><td><input type='button' value='X' class='btn-del' data-id='"+fixture.id+"' />&nbsp;<input type='button' value='edit' class='btn-edit' data-id='"+fixture.id+"' /></td></tr>";
+        return "<tr class='fixture'><td>"+index+".</td><td class='stage'>"+fixture.stage+"</td><td class='team1'>"+fixture.team1+"</td><td class='team2'>"+fixture.team2+"</td><td class='date'>"+(fixture.startDate && new Date(fixture.startDate).toLocaleString())+"</td><td class='score'>"+fixture.score+"</td><td><button class='btn-del' data-id='"+fixture.id+"'>Delete</button>&nbsp;<button class='btn-edit' data-id='"+fixture.id+"'>Edit</button></td></tr>";
       }
       function success(msg){
         $('#result').removeClass('error').addClass('success').html(msg).show().fadeOut(3000);
@@ -139,7 +139,7 @@
           <td class='team2'><%=fixture.team2%></td>
           <td class='date'><%=fixture.startDate && fixture.startDate.toLocaleString()%></td>
           <td class='score'><%=fixture.score%></td>
-          <td><input type="button" value="X" class="btn-del" data-id="<%=fixture.id%>" />&nbsp;<input type="button" value="edit" class="btn-edit" data-id='<%=fixture.id%>' /></td>
+          <td><button class="btn-del" data-id="<%=fixture.id%>">Delete</button>&nbsp;<button class="btn-edit" data-id='<%=fixture.id%>'>Edit</button></td>
         </tr>
 
     <%}); %>
@@ -150,7 +150,7 @@
           <td><input type="text" id="team2" /></td>
           <td><input type="text" id="date" /></td>
           <td><input type="text" id="score" /></td>
-          <td><input type="button" id="btn-add" value="Add">&nbsp;<input type="button" id="btn-cancel" value="Cancel"></td>
+          <td><button id="btn-add">Add</button>&nbsp;<button id="btn-cancel">Cancel</button></td>
         </tr>
       </tbody>
     </table>

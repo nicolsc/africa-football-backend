@@ -34,12 +34,12 @@
           
           $('#id', $newplayer).val($(evt.currentTarget).attr('data-id'));
           $('#number', $newplayer).val($('.number',$current).text());
-          $('#team', $newplayer).val($('.number',$current).text());
+          $('#team', $newplayer).val($('.team',$current).text());
           $('#firstname', $newplayer).val($('.firstname',$current).text());
           $('#lastname', $newplayer).val($('.lastname',$current).text());
           $('#position', $newplayer).val($('.position',$current).text());
           $('#club', $newplayer).val($('.club',$current).text());
-          $('#date', $newplayer).val($('.dob',$current).text());
+          $('#dob', $newplayer).val($('.dob',$current).text());
 
           $('#new-player #btn-add').val('Update');
 
@@ -86,18 +86,9 @@
           });
 
         }, error:function(err){
-          var msg = 'Error';
-          try{
-            var result = eval(err.responseText);
-            console.log(result);
-          }
-          catch (e){
-
-          }
-          error(err.msg);
-          console.log(err, err.statusCode)
-          if (err.status == 404){
-             $('tbody tr.player').remove();
+            error(err);
+            if (err.status == 404){
+              $('tbody tr.player').remove();
           }
         }});
       }
@@ -105,14 +96,21 @@
         if (!player){
           return "";
         }
-        return "<tr class='player'><td>"+player.team+"</td><td class='number'>"+player.number+"</td><td class='lastname'>"+player.lastname+"</td><td class='firstname'>"+player.firstname+"</td><td class='position'>"+player.position+"</td><td class='club'>"+player.club+"</td><td class='dob'>"+(player.dateCreated && new Date(player.dateCreated).toLocaleDateString())+"</td><td><input type='button' value='X' class='btn-del' data-id='"+player.id+"' />&nbsp;<input type='button' value='edit' class='btn-edit' data-id='"+player.id+"' /></td></tr>";
+        return "<tr class='player'><td>"+player.team+"</td><td class='number'>"+player.number+"</td><td class='lastname'>"+player.lastname+"</td><td class='firstname'>"+player.firstname+"</td><td class='position'>"+player.position+"</td><td class='club'>"+player.club+"</td><td class='dob'>"+(player.dateCreated && new Date(player.dateCreated).toLocaleDateString())+"</td><td class='image'>"+player.image+"</td><td class='buttons'><button class='btn-del' data-id='"+player.id+"'>Delete</button>&nbsp;<button class='btn-edit' data-id='"+player.id+"'>Edit</button></td></tr>";
       }
       function success(msg){
         $('#result').removeClass('error').addClass('success').html(msg).show().fadeOut(3000);
         clear();
       }
-      function error(msg){
-        $('#result').addClass('error').removeClass('success').html('Error - '+msg).show().fadeOut(3000);
+      function error(err){
+        var msg = '';
+        if (typeof err == 'string'){
+          msg = err;
+        }
+        else{
+          msg = 'Error  '+err.status+' '+err.statusText;
+        }
+        $('#result').addClass('error').removeClass('success').html(msg).show().fadeOut(3000);
       }
     </script>
     <link rel="stylesheet" href="/css/style.css" />
@@ -130,6 +128,7 @@
           <th>Position</th>
           <th>Club</th>
           <th>D.o.b</th>
+          <th>Image URL</th>
           <th>&nbsp;</th>
         </tr>
       </thead>
@@ -144,7 +143,8 @@
           <td class='position'><%=player.position%></td>
           <td class='club'><%=player.club%></td>
           <td class='dob'><%=player.dateCreated && player.dateCreated.toLocaleDateString()%></td>
-          <td><input type="button" value="X" class="btn-del" data-id="<%=player.id%>" />&nbsp;<input type="button" value="edit" class="btn-edit" data-id='<%=player.id%>' /></td>
+          <td class='image'><%=player.image%></td>
+          <td class='buttons'><button class="btn-del" data-id="<%=player.id%>">Delete</button>&nbsp;<button class="btn-edit" data-id='<%=player.id%>'>Edit</button></td>
         </tr>
 
     <%}); %>
@@ -156,7 +156,8 @@
           <td><input type="text" id="position" /></td>
           <td><input type="text" id="club" /></td>
           <td><input type="text" id="dob" /></td>
-          <td><input type="button" id="btn-add" value="Add">&nbsp;<input type="button" id="btn-cancel" value="Cancel"></td>
+          <td><input type="text" id="image" /></td>
+          <td><button id="btn-add">Add</button>&nbsp;<button id="btn-cancel">Cancel</button></td>
         </tr>
       </tbody>
     </table>

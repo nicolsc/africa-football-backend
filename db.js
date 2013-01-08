@@ -20,7 +20,8 @@ exports.getDb = function(cb){
 			position:String,
 			dob:Date,
 			club:String,
-			number:Number
+			number:Number,
+			image:String
 		})
 	};
 
