@@ -129,7 +129,11 @@ require('./config').getConfig(function(err, config) {
     app.get('/admin/players', function(req, res){
 
       db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}, function(err, players){
-        res.render('players.ejs', {err:err, players:players});
+        var data=[];
+        _.each(players, function(item){
+          data.push(schemaIO.player(item));
+        });
+        res.render('players.ejs', {err:err, players:data});
       });
 
 
@@ -189,7 +193,6 @@ require('./config').getConfig(function(err, config) {
     * PUT /fixtures/:id
     **/
     app.put('/fixtures/:id', function(req, res){
-      console.log('PUT', req.params.id);
       if (!req.params || !req.params.id){
         res.status(400).json({'msg':'Missing param `id`'});
       }
@@ -200,7 +203,6 @@ require('./config').getConfig(function(err, config) {
         if (!doc){
           return res.status(404).json({msg:'Document not found'});
         }
-        console.log('params', req.body);
         _.each(req.body, function(val, key){
           doc[key] = val;
         });
@@ -211,21 +213,79 @@ require('./config').getConfig(function(err, config) {
     });
 
 
-    /*
+    /**
     * POST /players
-    * Register new player
-    **/
-     app.post('/players', function(req, res){
+    */
+    app.post('/players', function(req, res){
 
-      var player = new db.Player(req.body);
-      player.save(function(err){
+      var fixture = new db.Player(req.body);
+      fixture.save(function(err){
         if (err){
-          return res.status(500).send(err);
+          return res.status(500).json({msg:err});
         }
-        return res.json(player);
+        return res.json(fixture);
       });
 
     });
+
+    /**
+    * GET /players/:id
+    **/
+    app.get('/players/:id', function(req, res){
+      if (!req.params || !req.params.id){
+        res.status(400).json({'msg':'Missing param `id`'});
+      }
+      db.Player.findOne({_id:req.params.id}, function (err, doc){
+        if (err){
+          return res.status(500).json({msg:'Unexpected error while retrieving document: '+err});
+        }
+        if (!doc){
+          return res.status(404).json({msg:'Document not found'});
+        }
+        res.jsonp(schemaIO.player(doc));
+      });
+    });
+
+    /**
+    * DELETE /players/:id
+    **/
+    app.delete('/players/:id', function(req, res){
+      if (!req.params || !req.params.id){
+        res.status(400).json({'msg':'Missing param `id`'});
+      }
+      db.Player.remove({_id:req.params.id}).exec(function(err, num){
+        if (err){
+          return res.status(500).json({msg:'Unexpected error while removing document : '+err});
+        }
+        if (!num){
+          return res.status(404).json({msg:'Zero documents affected'});
+        }
+        res.json({msg:num+' documents removed'});
+      });
+    });
+    /**
+    * PUT /players/:id
+    **/
+    app.put('/players/:id', function(req, res){
+      if (!req.params || !req.params.id){
+        res.status(400).json({'msg':'Missing param `id`'});
+      }
+      db.Player.findOne({_id:req.params.id}, function (err, doc){
+        if (err){
+          return res.status(500).json({msg:'Unexpected error while updating document: '+err});
+        }
+        if (!doc){
+          return res.status(404).json({msg:'Document not found'});
+        }
+        _.each(req.body, function(val, key){
+          doc[key] = val;
+        });
+        doc.save();
+        res.json(schemaIO.player(doc));
+
+      });
+    });
+
 
     app.get('/', function(req, res){
       return fourofour(req,res);
@@ -274,8 +334,7 @@ require('./config').getConfig(function(err, config) {
       },
       player:function(p){
          var article = {};
-         article.familyname = ''+p.name;
-        article.name = (p.firstname && p.firstname.length ? p.firstname.substring(0,1)+'.':'' )+ p.name;
+        article.name = (p.firstname && p.firstname.length ? p.firstname.substring(0,1)+'.':'' )+ p.lastname;
         article.description = '';
         if (p.number){
           article.description += '#'+p.number+'. ';
@@ -293,7 +352,10 @@ require('./config').getConfig(function(err, config) {
         article.position = p.position;
         article.club = p.club;
         article.number = p.number;
-        article._id = p.id;
+        article.firstname = p.firstname;
+        article.lastname = p.lastname;
+        article.id = p.id;
+        article.team = p.team;
         
         return article;
       }

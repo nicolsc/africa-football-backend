@@ -3,57 +3,133 @@
   <head>
     <meta charset="utf-8">
     <title>Players</title>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
+    <script type="text/javascript" src="/js/jquery.js"></script>
     <script type="text/javascript">
-    	$(document).ready(function(){
-    		$('#btn-new').on('click', function(evt){
-	    		var params = {};
+      $(document).ready(function(){
+        $('#players').on('click', '#btn-add', function(evt){
+          var params = {};
           $('#new-player input[type=text]').each(function(idx, item){
             params[item.id] = item.value;
           });
-	    		$.ajax({type:'POST', url:'/players/new', data:params, dataType:'json', success:function(result){
-            $('#result').removeClass('error').addClass('success').html('Success - player id : '+result._id).show().fadeOut(3000);
+          console.log('params', params)
+          if ($('#new-player #id').val()){
+            params.id = $('#new-player #id').val();
+            return editplayer(params);
+          }
+          else{
+            return newplayer(params);  
+          }
+          
+        });
+        $('#players').on('click', '.btn-del',function(evt){
+          deleteplayer($(evt.currentTarget).attr('data-id'));
+        });
+
+        $('#players').on('click', '.btn-edit', function(evt){
+          //editplayer($(evt.currentTarget).attr('data-id'));
+          //feed 'new' form with this player info
+          var $newplayer = $('#new-player');
+          var $current = $(evt.currentTarget.parentNode.parentNode);
+          
+          $('#id', $newplayer).val($(evt.currentTarget).attr('data-id'));
+          $('#number', $newplayer).val($('.number',$current).text());
+          $('#team', $newplayer).val($('.number',$current).text());
+          $('#firstname', $newplayer).val($('.firstname',$current).text());
+          $('#lastname', $newplayer).val($('.lastname',$current).text());
+          $('#position', $newplayer).val($('.position',$current).text());
+          $('#club', $newplayer).val($('.club',$current).text());
+          $('#date', $newplayer).val($('.dob',$current).text());
+
+          $('#new-player #btn-add').val('Update');
+
+        });
+        $('#players').on('click', '#btn-cancel', function(evt){
+          clear();
+        });
+      });
+
+      function newplayer(params){
+        $.ajax({type:'POST', url:'/players', data:params, dataType:'json', success:function(result){
+            success('Success - player id : '+result.id);
             refresh();
-	    		}, error:function(err){
-            console.log('err', err);
-	    			$('#result').addClass('error').removeClass('success').html('Error - '+err).show().fadeOut(3000);
-	    		}});
-	    	});
-    	});
+          }, error:function(err){
+            error(err.msg);
+          }
+        });
+      }
+      function deleteplayer(id){
+        $.ajax({type:'DELETE', url:'/players/'+id, dataType:'json', success:function(result){
+            success('Success - '+result.msg);
+            refresh();
+          }, error:function(err){
+            error(err.msg);
+          }
+        });
+      }
+      function editplayer(params){
+        $.ajax({type:'PUT', url:'/players/'+params.id, data:params,dataType:'json', success:function(result){
+          success('Edit player '+result.id);
+          refresh();
+        }});
+      }
+      function clear(){
+        $('#new-player input[type=text]').val('');
+        $('#new-player input[type=hidden]').val('');
+        $('#new-player #btn-add').val('Add');
+      }
       function refresh(){
         $.ajax({type:'GET', url:'/players', dataType:'jsonp', success:function(result){
-          console.log('success', result);
           $('tbody tr.player').remove();
           result.reverse().forEach(function(item, idx){
             $('tbody').prepend(playerTpl(item, result.length-idx));
           });
 
         }, error:function(err){
-          console.log('err', err);
+          var msg = 'Error';
+          try{
+            var result = eval(err.responseText);
+            console.log(result);
+          }
+          catch (e){
+
+          }
+          error(err.msg);
+          console.log(err, err.statusCode)
+          if (err.status == 404){
+             $('tbody tr.player').remove();
+          }
         }});
       }
       function playerTpl(player, index){
         if (!player){
           return "";
         }
-        return "<tr class='player'><td>"+player.team+".</td><td>"+player.number+"</td><td>"+(player.familyname ? player.familyname :  player.name)+"</td><td>"+player.firstname+"</td><td>"+player.position+"</td><td>"+(player.dob && new Date(player.dob).toLocaleString())+"</td><td>"+player.club+"</td><td><input type='button' value='X' class='btn-del' />&nbsp;<input type='button' value='edit' class='btn-edit' /></td></tr>";
+        return "<tr class='player'><td>"+player.team+"</td><td class='number'>"+player.number+"</td><td class='lastname'>"+player.lastname+"</td><td class='firstname'>"+player.firstname+"</td><td class='position'>"+player.position+"</td><td class='club'>"+player.club+"</td><td class='dob'>"+(player.dateCreated && new Date(player.dateCreated).toLocaleDateString())+"</td><td><input type='button' value='X' class='btn-del' data-id='"+player.id+"' />&nbsp;<input type='button' value='edit' class='btn-edit' data-id='"+player.id+"' /></td></tr>";
+      }
+      function success(msg){
+        $('#result').removeClass('error').addClass('success').html(msg).show().fadeOut(3000);
+        clear();
+      }
+      function error(msg){
+        $('#result').addClass('error').removeClass('success').html('Error - '+msg).show().fadeOut(3000);
       }
     </script>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-    <h1>2013 players</h1>
+    <h1>2013 Players</h1>
     <div id="result"></div>
-    <table>
+    <table id="players">
       <thead>
         <tr>
-          <th>Team</th>
+          <th>Registered for Team</th>
           <th>#</th>
-          <th>Name</th>
+          <th>Last name</th>
           <th>First name</th>
           <th>Position</th>
-          <th>D.o.b</th>
           <th>Club</th>
+          <th>D.o.b</th>
           <th>&nbsp;</th>
         </tr>
       </thead>
@@ -61,36 +137,28 @@
     <% players && players.forEach(function(player, idx){
       %>
         <tr class='player'>
-          <td><%=player.team%></td>
-          <td><%=player.number%>.</td>
-          <td><%=player.familyname || player.name%></td>
-          <td><%=player.firstname%></td>
-          <td><%=player.position%></td>
-          <td><%=player.dob && player.dob.toLocaleString()%></td>
-          <td><%=player.club%></td>
-          <td><input type="button" value="X" class="btn-del" />&nbsp;<input type="button" value="edit" class="btn-edit" /></td>
+          <td class='team'><%=player.team%></td>
+          <td class='number'><%=player.number%></td>
+          <td class='lastname'><%=player.lastname%></td>
+          <td class='firstname'><%=player.firstname%></td>
+          <td class='position'><%=player.position%></td>
+          <td class='club'><%=player.club%></td>
+          <td class='dob'><%=player.dateCreated && player.dateCreated.toLocaleDateString()%></td>
+          <td><input type="button" value="X" class="btn-del" data-id="<%=player.id%>" />&nbsp;<input type="button" value="edit" class="btn-edit" data-id='<%=player.id%>' /></td>
         </tr>
 
     <%}); %>
         <tr id="new-player">
-          <td><input type="text" id="team" /></td>
+          <td>&nbsp;<input type="hidden" id="id" /><input type="text" id="team" /></td>
           <td><input type="text" id="number" /></td>
-          <td><input type="text" id="name" /></td>
+          <td><input type="text" id="lastname" /></td>
           <td><input type="text" id="firstname" /></td>
           <td><input type="text" id="position" /></td>
-          <td><input type="text" id="dob" /></td>
           <td><input type="text" id="club" /></td>
-          <td><input type="button" id="btn-new" value="Add"></td>
+          <td><input type="text" id="dob" /></td>
+          <td><input type="button" id="btn-add" value="Add">&nbsp;<input type="button" id="btn-cancel" value="Cancel"></td>
         </tr>
       </tbody>
     </table>
-
-    <form>
-    	
-		  
-		  
-
-    	
-    </form>
   </body>
 </html>

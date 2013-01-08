@@ -16,19 +16,12 @@ exports.getDb = function(cb){
 		player: new mongoose.Schema({
 			team:String,
 			firstname:String,
-			name:String,
+			lastname:String,
 			position:String,
 			dob:Date,
 			club:String,
 			number:Number
 		})
-	};
-
-	schemas.player.dump = function(){
-		return {
-			name:this.firstname ? this.firstname.substring(0,1)+'.' : '' + this.name,
-			description: (this.position ? "Pos.: "+this.position+'\n' : '') + (this.club ? "Club: "+this.club : '')
-		};
 	};
 
 	var db = {
