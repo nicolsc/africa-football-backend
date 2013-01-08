@@ -2,21 +2,28 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Login</title>
+    <title>Register</title>
     <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
     <script type="text/javascript" src="/js/jquery.js"></script>
     <script type="text/javascript" src="/js/admin.js"></script>
     <script type="text/javascript">
     	$(document).ready(function(){
-    		$('.login-form').on('click', '#btn-submit', function(evt){
-	    		var params = {};
-          $('.login-form input').each(function(idx,item){
+    		$('.register-form').on('click', '#btn-submit', function(evt){
+          var params = {};
+          $('.register-form input').each(function(idx,item){
             params[item.id] = item.value;
           });
           if (!params.name || !params.password){
             return error('Please provide your username & password');
           }
-          $.ajax({type:'POST', url:'/login', data:params, dataType:'json', success:function(result){
+          if (params.password !== params.password2){
+            return error('Password & confirmation must match'); 
+          }
+          if (params.password.length < 5){
+            return error('Password too short');
+          }
+          delete params.password2,
+          $.ajax({type:'POST', url:'/users', data:params, dataType:'json', success:function(result){
             success(JSON.stringify(result));
           }, error:function(err){
             error(err);
@@ -24,18 +31,22 @@
           });
         });
       });
+      
     </script>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body class="smallform">
-    <h1>Log in</h1>
+    <h1>Register</h1>
     <div id="result"></div>
-    <div class="login-form">
+    <div class="register-form">
       <div>
           <div class="label"><label for='name'>Name:</label></div><input type="text" id="name" />
       </div>
       <div>
           <div class="label"><label for='password'>Password:</label></div><input type="password" id="password" />
+      </div>
+      <div>
+          <div class="label"><label for='password2'>Confirm Password:</label></div><input type="password" id="password2" />
       </div>
       <div class="buttons">
         <button id="btn-submit">OK</button>

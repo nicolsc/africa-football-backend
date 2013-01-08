@@ -5,6 +5,7 @@
     <title>Fixtures</title>
     <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
     <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
     <script type="text/javascript">
     	$(document).ready(function(){
     		$('#fixtures').on('click', '#btn-add', function(evt){
@@ -42,35 +43,12 @@
 
         });
         $('#fixtures').on('click', '#btn-cancel', function(evt){
-          clear();
+          reset();
         });
     	});
 
-      function newFixture(params){
-        $.ajax({type:'POST', url:'/fixtures', data:params, dataType:'json', success:function(result){
-            success('Success - Fixture id : '+result.id);
-            refresh();
-          }, error:function(err){
-            error(err.msg);
-          }
-        });
-      }
-      function deleteFixture(id){
-        $.ajax({type:'DELETE', url:'/fixtures/'+id, dataType:'json', success:function(result){
-            success('Success - '+result.msg);
-            refresh();
-          }, error:function(err){
-            error(err.msg);
-          }
-        });
-      }
-      function editFixture(params){
-        $.ajax({type:'PUT', url:'/fixtures/'+params.id, data:params,dataType:'json', success:function(result){
-          success('Edit fixture '+result.id);
-          refresh();
-        }});
-      }
-      function clear(){
+     
+      function reset(){
         $('#new-fixture input[type=text]').val('');
         $('#new-fixture input[type=hidden]').val('');
         $('#new-fixture #btn-add').text('Add');
@@ -91,8 +69,7 @@
           catch (e){
 
           }
-          error(err.msg);
-          console.log(err, err.statusCode)
+          error(err);
           if (err.status == 404){
              $('tbody tr.fixture').remove();
           }
@@ -103,13 +80,6 @@
           return "";
         }
         return "<tr class='fixture'><td>"+index+".</td><td class='stage'>"+fixture.stage+"</td><td class='team1'>"+fixture.team1+"</td><td class='team2'>"+fixture.team2+"</td><td class='date'>"+(fixture.startDate && new Date(fixture.startDate).toLocaleString())+"</td><td class='score'>"+fixture.score+"</td><td><button class='btn-del' data-id='"+fixture.id+"'>Delete</button>&nbsp;<button class='btn-edit' data-id='"+fixture.id+"'>Edit</button></td></tr>";
-      }
-      function success(msg){
-        $('#result').removeClass('error').addClass('success').html(msg).show().fadeOut(3000);
-        clear();
-      }
-      function error(msg){
-        $('#result').addClass('error').removeClass('success').html('Error - '+msg).show().fadeOut(3000);
       }
     </script>
     <link rel="stylesheet" href="/css/style.css" />

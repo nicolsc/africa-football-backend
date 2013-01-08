@@ -5,6 +5,8 @@
     <title>Players</title>
     <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
     <script type="text/javascript" src="/js/jquery.js"></script>
+    
+    <script type="text/javascript" src="/js/admin.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
         $('#players').on('click', '#btn-add', function(evt){
@@ -45,35 +47,12 @@
 
         });
         $('#players').on('click', '#btn-cancel', function(evt){
-          clear();
+          reset();
         });
       });
 
-      function newplayer(params){
-        $.ajax({type:'POST', url:'/players', data:params, dataType:'json', success:function(result){
-            success('Success - player id : '+result.id);
-            refresh();
-          }, error:function(err){
-            error(err.msg);
-          }
-        });
-      }
-      function deleteplayer(id){
-        $.ajax({type:'DELETE', url:'/players/'+id, dataType:'json', success:function(result){
-            success('Success - '+result.msg);
-            refresh();
-          }, error:function(err){
-            error(err.msg);
-          }
-        });
-      }
-      function editplayer(params){
-        $.ajax({type:'PUT', url:'/players/'+params.id, data:params,dataType:'json', success:function(result){
-          success('Edit player '+result.id);
-          refresh();
-        }});
-      }
-      function clear(){
+      
+      function reset(){
         $('#new-player input[type=text]').val('');
         $('#new-player input[type=hidden]').val('');
         $('#new-player #btn-add').text('Add');
@@ -100,7 +79,7 @@
       }
       function success(msg){
         $('#result').removeClass('error').addClass('success').html(msg).show().fadeOut(3000);
-        clear();
+        reset();
       }
       function error(err){
         var msg = '';

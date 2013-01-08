@@ -12,7 +12,7 @@ h1, h2, h3 {
 
 h1 {
   font-weight: 300;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   text-align: center;
   margin-bottom: 20px;
 }
@@ -70,9 +70,30 @@ input#number, input#position{
 input#dob, input#date, input#image{
   width:200px;
 }
-td.buttons{
+.buttons{
   text-align: center;
 }
+div.label{
+  display: inline-block;
+  width:150px;
+  text-align: right;
+  padding-right: 10px;
+}
+.smallform{
+  margin:10% 0 0 35%;
+  width:300px;
+}
+.smallform #result{
+  width:100%;
+  margin-left: 0;
+}
+.smallform .buttons{
+  margin-top: 10px;
+}
+.login-form input[type=text], .register-form input[type=text], .login-form input[type=password], .register-form input[type=password]{
+  width:110px;
+}
+
 
 button {
   background-color: #759ae9;

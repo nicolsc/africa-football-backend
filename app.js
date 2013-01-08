@@ -252,6 +252,15 @@ require('./config').getConfig(function(err, config) {
 
     /* admin area */
     /**
+    * GET /register
+    * display register form
+    **/
+    app.get('/register', function(req, res){
+      res.render('register.ejs');
+    });
+
+   
+    /**
     * GET /login
     * display login form
     **/
@@ -264,7 +273,27 @@ require('./config').getConfig(function(err, config) {
     * attempt to log in
     **/
     app.post('/login', function(req, res){
-      res.status(404).send();
+      console.log(req.body);
+      if (!req.body || !req.body.name || !req.body.password){
+        return res.status(400).json({msg:'Missing parameters'});
+      }
+      db.User.findOne({name:req.body.name}).exec(function(errFind, user){
+        if (errFind){
+          return res.status(500).json({msg:errFind});
+        }
+        if (!user){
+          return res.send(403);
+        }
+        user.checkPassword(req.body.password, function(errCheck, resCheck){
+          if (errCheck){
+            return res.status(500).json({msg:'Unable to check password '+errCheck});
+          }
+          if (!resCheck){
+            return res.status(403);
+          }
+          return res.json(user);
+        });
+      });
     });
 
 
@@ -305,6 +334,53 @@ require('./config').getConfig(function(err, config) {
       });
 
 
+    });
+
+    /**
+    * GET /users
+    **/
+    app.get('/users', function(req, res){
+      db.User.find({}).exec(function(err, users){
+        if (err){
+          return res.status(500);
+        }
+        var data=[];
+        _.each(users, function(item){
+          data.push({name:item.name, admin:item.admin});
+        });
+        res.json(data);
+      });
+    });
+     /**
+    * POST /users
+    * New user
+    **/
+    app.post('/users', function(req, res){
+      if (!req.body || !req.body.name || !req.body.password){
+        return res.status(400).json({msg:'Missing parameters'});
+      }
+
+      db.User.count({name:req.body.name}, function(errFind, count){
+        console.log('count players', {name:req.body.name}, errFind, count);
+        if(err){
+          return res.status(500).json({msg:err || 'unknown error #1'});
+        }
+        if (count>0){
+          return res.status(403).json({msg:'Already '+count+' users with this `name`'});
+        }
+        var user = {};
+        user.name = req.body.name;
+        user.salt = bcrypt.genSaltSync(10);
+        user.password = bcrypt.hashSync(req.body.password, user.salt);
+        db.User.create(user, function(err, doc){
+          if (err || !doc){
+            return res.status(500).json({msg:err || 'unknown error #2'});
+          }
+          res.json({name:doc.name, id:doc._id});
+        });
+      });
+
+      
     });
 
     app.get('/', function(req, res){
