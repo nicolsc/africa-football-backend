@@ -321,7 +321,7 @@ require('./config').getConfig(function(err, config) {
         if (fix.date){
           article.startDate = fix.date;
         }
-        article.description = dateformat(fix.date, 'dd/mm')+' - '+fix.stage;
+        article.description = dateformat(fix.date, 'dd/mm HH:MM')+' - '+fix.stage;
 
         /* still need them */
         article.stage = fix.stage;
