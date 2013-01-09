@@ -17,7 +17,8 @@
             return error('Please provide your username & password');
           }
           $.ajax({type:'POST', url:'/login', data:params, dataType:'json', success:function(result){
-            success(JSON.stringify(result));
+            //success(JSON.stringify(result));
+            window.location.href = '/admin';
           }, error:function(err){
             error(err);
           }

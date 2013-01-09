@@ -1,7 +1,19 @@
 exports.getDb = function(cb){
+	var express = require('express');
 	var mongoose = require('mongoose');
-	//var MongoStore = require('connect-mongo')(require('express'));
+	var MongoStore = require('connect-mongo')(express);
 	var bcrypt = require('bcrypt');
+
+
+	// var MongoStore = new MongoStore({
+ //          db:mongodb_config[3],
+ //          host:mongodb_config[2].split(':')[0],
+ //          port:parseInt(mongodb_config[2].split(':')[1],10)
+ //        });
+
+            
+
+
 	var schemas = {
 		fixture : new mongoose.Schema({
 			date:{type:Date, required:true},
@@ -26,12 +38,28 @@ exports.getDb = function(cb){
 			name:{type:String, required: true, index: { unique: true } },
 			password:{type:String, required:true},
 			admin:Boolean
+		}),
+		session:new mongoose.Schema({
+			_id:String,
+			expires: Date,
+			session : {
+				lastAccess:Date,
+				cookie:{
+					originalMaxAge:Date,
+					expires:Date,
+					httpOnly:Boolean,
+					path:String
+				},
+				user:{
+					name:String,
+					admin:Boolean
+				}
+			}
 		})
 	};
 
 	schemas.user.methods.checkPassword = function(input, callback) {
 		bcrypt.compare(input, this.password, function(err, result) {
-			console.log('bcrypt res', err, result);
 			if (err) return cb(err);
 			callback(null, result);
 		});
@@ -41,7 +69,8 @@ exports.getDb = function(cb){
 		Fixture: mongoose.model('Fixture',schemas.fixture),
 		Player: mongoose.model('Player', schemas.player),
 		User: mongoose.model('User', schemas.user),
-		mongoose:mongoose
+		mongoose:mongoose,
+		MongoStore:MongoStore
 	};
 
 

@@ -8,8 +8,16 @@ var express = require('express'),
     path = require("path"),
     request = require('request'),
     dateformat=require('dateformat'),
-    ObjectId = require('mongoose').Types.ObjectId;
+    bcrypt = require('bcrypt'),
+    ObjectId = require('mongoose').Types.ObjectId,
+    MongoStore = require('connect-mongo')(express);
 
+var checkAdmin = function(req, res, next){
+      if (!req.session || !req.session.user || !req.session.user.admin){
+        return res.redirect('/login');
+      }
+      next();
+    };
 
 
 require('./config').getConfig(function(err, config) {
@@ -33,16 +41,38 @@ require('./config').getConfig(function(err, config) {
   //  models.connect();
 
   // Configuration
+  
+  var mongodb_config = config.MONGODB.split('/');
+  /*
+    0 : mongodb:
+    1 : ""
+    2 : host:port
+    3 : db_name
+  */
+  console.log('conf', {
+          db:mongodb_config[3],
+          host:mongodb_config[2].split(':')[0],
+          port:parseInt(mongodb_config[2].split(':')[1], 10)
+        });
     app.configure(function() {
       app.use(express.bodyParser());
       app.use(express.cookieParser());
+      app.use(express.session({
+        store: new db.MongoStore({
+          url: config.MONGODB
+        }),
+        secret: 'not keyboard cat',
+        cookie: {maxAge: 60000 ,  secure: false, httpOnly:false }
+      }));
       app.use(express.methodOverride());
       app.use(express.static('public'));
       app.engine('html', require('ejs').renderFile);
 
     });
 
-    
+    app.get('/session', function(req, res){
+      res.json(req.session);
+    });
     /**
     * GET /fixtures
     * List all fixtures
@@ -105,7 +135,7 @@ require('./config').getConfig(function(err, config) {
     /**
     * POST /fixtures
     */
-    app.post('/fixtures', function(req, res){
+    app.post('/fixtures', checkAdmin,function(req, res){
 
       var fixture = new db.Fixture(req.body);
       fixture.save(function(err){
@@ -138,7 +168,7 @@ require('./config').getConfig(function(err, config) {
     /**
     * DELETE /fixtures/:id
     **/
-    app.delete('/fixtures/:id', function(req, res){
+    app.delete('/fixtures/:id', checkAdmin,function(req, res){
       if (!req.params || !req.params.id){
         res.status(400).json({'msg':'Missing param `id`'});
       }
@@ -155,7 +185,7 @@ require('./config').getConfig(function(err, config) {
     /**
     * PUT /fixtures/:id
     **/
-    app.put('/fixtures/:id', function(req, res){
+    app.put('/fixtures/:id',checkAdmin, function(req, res){
       if (!req.params || !req.params.id){
         res.status(400).json({'msg':'Missing param `id`'});
       }
@@ -179,7 +209,7 @@ require('./config').getConfig(function(err, config) {
     /**
     * POST /players
     */
-    app.post('/players', function(req, res){
+    app.post('/players', checkAdmin,function(req, res){
 
       var fixture = new db.Player(req.body);
       fixture.save(function(err){
@@ -212,7 +242,7 @@ require('./config').getConfig(function(err, config) {
     /**
     * DELETE /players/:id
     **/
-    app.delete('/players/:id', function(req, res){
+    app.delete('/players/:id',checkAdmin , function(req, res){
       if (!req.params || !req.params.id){
         res.status(400).json({'msg':'Missing param `id`'});
       }
@@ -229,7 +259,7 @@ require('./config').getConfig(function(err, config) {
     /**
     * PUT /players/:id
     **/
-    app.put('/players/:id', function(req, res){
+    app.put('/players/:id', checkAdmin, function(req, res){
       if (!req.params || !req.params.id){
         res.status(400).json({'msg':'Missing param `id`'});
       }
@@ -273,7 +303,6 @@ require('./config').getConfig(function(err, config) {
     * attempt to log in
     **/
     app.post('/login', function(req, res){
-      console.log(req.body);
       if (!req.body || !req.body.name || !req.body.password){
         return res.status(400).json({msg:'Missing parameters'});
       }
@@ -291,19 +320,30 @@ require('./config').getConfig(function(err, config) {
           if (!resCheck){
             return res.status(403);
           }
+          req.session.user = user;
           return res.json(user);
         });
       });
     });
 
-
+    /**
+    * GET /admin
+    * home menu
+    **/
+    app.get('/admin', checkAdmin, function(req, res){
+      console.log('GET /admin', req.session);
+      if (req.session && req.session.user){
+        return res.render('admin.ejs', {user:req.session.user});
+      }
+      res.redirect('/login');
+    });
     /*
     * GET /admin/fixtures
     * Edit/Delete existing fixtures
     * Create new fixture
     **/
 
-    app.get('/admin/fixtures', function(req, res){
+    app.get('/admin/fixtures', checkAdmin, function(req, res){
 
       db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
         var data=[];
@@ -323,7 +363,7 @@ require('./config').getConfig(function(err, config) {
     * Edit/Delete existing players
     * Create new player
     **/
-    app.get('/admin/players', function(req, res){
+    app.get('/admin/players', checkAdmin, function(req, res){
 
       db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}, function(err, players){
         var data=[];
@@ -339,7 +379,7 @@ require('./config').getConfig(function(err, config) {
     /**
     * GET /users
     **/
-    app.get('/users', function(req, res){
+    app.get('/users', checkAdmin, function(req, res){
       db.User.find({}).exec(function(err, users){
         if (err){
           return res.status(500);
@@ -462,6 +502,8 @@ require('./config').getConfig(function(err, config) {
       }
 
     };
+
+    
 
     app.use(function(req, res, next){
       return fourofour(req, res);
