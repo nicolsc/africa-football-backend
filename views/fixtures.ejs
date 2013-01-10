@@ -47,6 +47,12 @@
         });
     	});
 
+      $(document).on('keypress', 'input[type=text]', function(evt){
+        if (evt.keyCode==13){
+          $('#btn-add').click();
+        }
+      });
+
      
       function reset(){
         $('#new-fixture input[type=text]').val('');
