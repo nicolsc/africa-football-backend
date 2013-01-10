@@ -63,8 +63,8 @@ require('./config').getConfig(function(err, config) {
 
     });
 
-    app.get('/session', function(req, res){
-      res.json(req.session);
+    app.get('/support', function(req, res){
+      res.send('Coming soon - contact form');
     });
     /**
     * GET /fixtures
