@@ -70,7 +70,7 @@
         $.ajax({type:'GET', url:'/players', dataType:'jsonp', success:function(result){
           $('tbody tr.player').remove();
           result.reverse().forEach(function(item, idx){
-            $('tbody').prepend(playerTpl(item, result.length-idx));
+            $('tbody').append(playerTpl(item, result.length-idx));
           });
 
         }, error:function(err){
@@ -121,6 +121,17 @@
         </tr>
       </thead>
       <tbody>
+         <tr id="new-player">
+          <td>&nbsp;<input type="hidden" id="id" /><input type="text" id="team" /></td>
+          <td><input type="text" id="number" /></td>
+          <td><input type="text" id="lastname" /></td>
+          <td><input type="text" id="firstname" /></td>
+          <td><input type="text" id="position" /></td>
+          <td><input type="text" id="club" /></td>
+          <td><input type="text" id="dob" /></td>
+          <td><input type="text" id="image" /></td>
+          <td><button id="btn-add">Add</button>&nbsp;<button id="btn-cancel">Cancel</button></td>
+        </tr>
     <% players && players.forEach(function(player, idx){
       %>
         <tr class='player'>
@@ -136,17 +147,7 @@
         </tr>
 
     <%}); %>
-        <tr id="new-player">
-          <td>&nbsp;<input type="hidden" id="id" /><input type="text" id="team" /></td>
-          <td><input type="text" id="number" /></td>
-          <td><input type="text" id="lastname" /></td>
-          <td><input type="text" id="firstname" /></td>
-          <td><input type="text" id="position" /></td>
-          <td><input type="text" id="club" /></td>
-          <td><input type="text" id="dob" /></td>
-          <td><input type="text" id="image" /></td>
-          <td><button id="btn-add">Add</button>&nbsp;<button id="btn-cancel">Cancel</button></td>
-        </tr>
+       
       </tbody>
     </table>
   </body>

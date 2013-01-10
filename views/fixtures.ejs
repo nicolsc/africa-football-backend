@@ -65,7 +65,7 @@
         $.ajax({type:'GET', url:'/fixtures', dataType:'jsonp', success:function(result){
           $('tbody tr.fixture').remove();
           result.reverse().forEach(function(item, idx){
-            $('tbody').prepend(fixtureTpl(item, result.length-idx));
+            $('tbody').append(fixtureTpl(item, result.length-idx));
           });
 
         }, error:function(err){
@@ -108,6 +108,15 @@
         </tr>
       </thead>
       <tbody>
+         <tr id="new-fixture">
+          <td>&nbsp;<input type="hidden" id="id" /></td>
+          <td><input type="text" id="stage" /></td>
+          <td><input type="text" id="team1" /></td>
+          <td><input type="text" id="team2" /></td>
+          <td><input type="text" id="date" /></td>
+          <td><input type="text" id="score" /></td>
+          <td><button id="btn-add">Add</button>&nbsp;<button id="btn-cancel">Cancel</button></td>
+        </tr>
     <% fixtures && fixtures.forEach(function(fixture, idx){
       %>
         <tr class='fixture'>
@@ -121,15 +130,7 @@
         </tr>
 
     <%}); %>
-        <tr id="new-fixture">
-          <td>&nbsp;<input type="hidden" id="id" /></td>
-          <td><input type="text" id="stage" /></td>
-          <td><input type="text" id="team1" /></td>
-          <td><input type="text" id="team2" /></td>
-          <td><input type="text" id="date" /></td>
-          <td><input type="text" id="score" /></td>
-          <td><button id="btn-add">Add</button>&nbsp;<button id="btn-cancel">Cancel</button></td>
-        </tr>
+       
       </tbody>
     </table>
   </body>
