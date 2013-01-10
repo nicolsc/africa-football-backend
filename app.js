@@ -123,6 +123,43 @@ require('./config').getConfig(function(err, config) {
 
       
     });
+    /**
+    * GET /squads
+    * List all players, grouped by team
+    **/
+    app.get('/squads', function(req, res){
+      if (!req.query || !req.query.callback){
+        req.query.callback = 'callback';
+      }
+      var data =[];
+      var tmp;
+      db.Player.find({},null, {sort:{team:1, positionPriority:1,  lastname:1, firstname:1}}).exec(function(err, players){
+        if (err){
+          return res.status(500).jsonp({msg:'An error occured : '+err});
+        }
+        if (!players || !players.length){
+          return res.status(404).jsonp({msg:'Error : No results'});
+        }
+        
+
+        _.each(players, function(player){
+          tmp = _.find(data, function(item, key){
+            return item.name == player.team;
+          });
+          if (!tmp){
+            data.push({name:player.team, players:[]});
+            tmp = _.find(data, function(item, key){
+              return item.name == player.team;
+            });
+          }
+          tmp.players.push(schemaIO.player(player));
+        });
+
+        res.jsonp(data);
+      });
+
+      
+    });
 
 
 
