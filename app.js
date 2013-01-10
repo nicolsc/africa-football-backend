@@ -105,7 +105,7 @@ require('./config').getConfig(function(err, config) {
         req.query.callback = 'callback';
       }
       
-      db.Player.find({},null, {sort:{team:1, number:1, name:1, firstname:1}}).exec(function(err, players){
+      db.Player.find({},null, {sort:{team:1, position:1, name:1, firstname:1}}).exec(function(err, players){
         if (err){
           return res.status(500).jsonp({msg:'An error occured : '+err});
         }
