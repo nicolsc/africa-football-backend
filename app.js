@@ -125,7 +125,8 @@ require('./config').getConfig(function(err, config) {
     });
     /**
     * GET /squads
-    * List all players, grouped by team
+    * List all players, 'grouped'by team
+    * 'grouped' meaning, there is a line with the team name before its players listing
     **/
     app.get('/squads', function(req, res){
       if (!req.query || !req.query.callback){
@@ -143,7 +144,7 @@ require('./config').getConfig(function(err, config) {
         
 
         _.each(players, function(player){
-          tmp = _.find(data, function(item, key){
+         /* tmp = _.find(data, function(item, key){
             return item.name == player.team;
           });
           if (!tmp){
@@ -153,6 +154,13 @@ require('./config').getConfig(function(err, config) {
             });
           }
           tmp.players.push(schemaIO.player(player));
+
+          */
+          if (!_.find(data, function(item, key){console.log(item, player);return item.name==player.team;})){
+            console.log('x', data);
+            data.push({name:player.team, description:'Coming soon...'});
+          }
+          data.push(schemaIO.player(player));
         });
 
         res.jsonp(data);
