@@ -522,7 +522,9 @@ require('./config').getConfig(function(err, config) {
 
         //article.dateCreated = p.dob;
         article.dob = p.dob;
-        article.image = p.image;
+        if (p.image){
+          article.image = {"@type":"ImageObject", "contentURL":p.image};
+        }
 
         /* still need them..*/
         article.position = p.position;

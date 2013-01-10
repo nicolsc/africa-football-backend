@@ -44,6 +44,7 @@
           $('#position', $newplayer).val($('.position',$current).text());
           $('#club', $newplayer).val($('.club',$current).text());
           $('#dob', $newplayer).val($('.dob',$current).text());
+          $('#image', $newplayer).val($('.image',$current).text());
 
           $('#new-player #btn-add').text('Update');
 
@@ -83,7 +84,7 @@
         if (!player){
           return "";
         }
-        return "<tr class='player'><td>"+player.team+"</td><td class='number'>"+player.number+"</td><td class='lastname'>"+player.lastname+"</td><td class='firstname'>"+player.firstname+"</td><td class='position'>"+player.position+"</td><td class='club'>"+player.club+"</td><td class='dob'>"+(player.dob && new Date(player.dob).toLocaleDateString())+"</td><td class='image'>"+player.image+"</td><td class='buttons'><button class='btn-del' data-id='"+player.id+"'>Delete</button>&nbsp;<button class='btn-edit' data-id='"+player.id+"'>Edit</button></td></tr>";
+        return "<tr class='player'><td>"+player.team+"</td><td class='number'>"+player.number+"</td><td class='lastname'>"+player.lastname+"</td><td class='firstname'>"+player.firstname+"</td><td class='position'>"+player.position+"</td><td class='club'>"+player.club+"</td><td class='dob'>"+(player.dob && new Date(player.dob).toLocaleDateString())+"</td><td class='image'>"+(player.image ? player.image.contentURL:'')+"</td><td class='buttons'><button class='btn-del' data-id='"+player.id+"'>Delete</button>&nbsp;<button class='btn-edit' data-id='"+player.id+"'>Edit</button></td></tr>";
       }
       function success(msg){
         $('#result').removeClass('error').addClass('success').html(msg).show().fadeOut(3000);
@@ -130,7 +131,7 @@
           <td class='position'><%=player.position%></td>
           <td class='club'><%=player.club%></td>
           <td class='dob'><%=player.dob && player.dob.toLocaleDateString()%></td>
-          <td class='image'><%=player.image%></td>
+          <td class='image'><%=player.image ? player.image.contentURL : ''%></td>
           <td class='buttons'><button class="btn-del" data-id="<%=player.id%>">Delete</button>&nbsp;<button class="btn-edit" data-id='<%=player.id%>'>Edit</button></td>
         </tr>
 
