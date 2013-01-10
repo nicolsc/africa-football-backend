@@ -12,7 +12,7 @@
         $('#players').on('click', '#btn-add', function(evt){
           var params = {};
           $('#new-player input[type=text]').each(function(idx, item){
-            params[item.id] = item.value;
+            item.value!="" && params[item.id] = item.value;
           });
           console.log('params', params)
           if ($('#new-player #id').val()){
