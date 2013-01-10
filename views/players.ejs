@@ -69,7 +69,7 @@
       function refresh(){
         $.ajax({type:'GET', url:'/players', dataType:'jsonp', success:function(result){
           $('tbody tr.player').remove();
-          result.reverse().forEach(function(item, idx){
+          result.forEach(function(item, idx){
             $('tbody').append(playerTpl(item, result.length-idx));
           });
 

@@ -64,7 +64,7 @@
       function refresh(){
         $.ajax({type:'GET', url:'/fixtures', dataType:'jsonp', success:function(result){
           $('tbody tr.fixture').remove();
-          result.reverse().forEach(function(item, idx){
+          result.forEach(function(item, idx){
             $('tbody').append(fixtureTpl(item, result.length-idx));
           });
 
