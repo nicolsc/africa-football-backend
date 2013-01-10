@@ -13,7 +13,6 @@ var express = require('express'),
     MongoStore = require('connect-mongo')(express);
 
 var checkAdmin = function(req, res, next){
-  console.log('checkAdmin', req.session);
       if (!req.session || !req.session.user || !req.session.user.admin){
         return res.redirect('/login');
       }

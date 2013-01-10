@@ -11,7 +11,9 @@
     		$('#fixtures').on('click', '#btn-add', function(evt){
 	    		var params = {};
           $('#new-fixture input[type=text]').each(function(idx, item){
-            item.value!="" && params[item.id] = item.value;
+            if (item.value!="" && item.value!="null"){
+              params[item.id] = item.value;
+            }
           });
           if ($('#new-fixture #id').val()){
             params.id = $('#new-fixture #id').val();
