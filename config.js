@@ -26,7 +26,6 @@ if (typeof process.env['MONGOHQ_URL'] != 'undefined') config['MONGODB'] = proces
  accesses node directly */
 config.HOSTPORT = config.HOST+((parseInt(config.HOST_PORT,10)!=80)?":"+config.HOST_PORT:"");
 
-
 // export non sensible data (used in tests)
 var exportedConfig = [];
 _.each(["HOSTPORT"], function(k) {

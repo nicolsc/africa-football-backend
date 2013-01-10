@@ -13,6 +13,7 @@ var express = require('express'),
     MongoStore = require('connect-mongo')(express);
 
 var checkAdmin = function(req, res, next){
+  console.log('checkAdmin', req.session);
       if (!req.session || !req.session.user || !req.session.user.admin){
         return res.redirect('/login');
       }
@@ -37,9 +38,7 @@ require('./config').getConfig(function(err, config) {
     var app = express();
     var server = http.createServer(app);
 
-    // Connect to mongodb
-  //  models.connect();
-
+    
   // Configuration
   
   var mongodb_config = config.MONGODB.split('/');
@@ -49,11 +48,6 @@ require('./config').getConfig(function(err, config) {
     2 : host:port
     3 : db_name
   */
-  console.log('conf', {
-          db:mongodb_config[3],
-          host:mongodb_config[2].split(':')[0],
-          port:parseInt(mongodb_config[2].split(':')[1], 10)
-        });
     app.configure(function() {
       app.use(express.bodyParser());
       app.use(express.cookieParser());
@@ -62,7 +56,7 @@ require('./config').getConfig(function(err, config) {
           url: config.MONGODB
         }),
         secret: 'not keyboard cat',
-        cookie: {maxAge: 60000 ,  secure: false, httpOnly:false }
+        cookie: {maxAge: 3600000 ,  secure: false, httpOnly:false }
       }));
       app.use(express.methodOverride());
       app.use(express.static('public'));
@@ -142,7 +136,7 @@ require('./config').getConfig(function(err, config) {
         if (err){
           return res.status(500).json({msg:err});
         }
-        return res.json(fixture);
+        return res.json(schemaIO.fixture(fixture));
       });
 
     });
@@ -211,12 +205,12 @@ require('./config').getConfig(function(err, config) {
     */
     app.post('/players', checkAdmin,function(req, res){
 
-      var fixture = new db.Player(req.body);
-      fixture.save(function(err){
+      var player = new db.Player(req.body);
+      player.save(function(err){
         if (err){
           return res.status(500).json({msg:err});
         }
-        return res.json(fixture);
+        return res.json(schemaIO.player(player));
       });
 
     });
@@ -318,7 +312,7 @@ require('./config').getConfig(function(err, config) {
             return res.status(500).json({msg:'Unable to check password '+errCheck});
           }
           if (!resCheck){
-            return res.status(403);
+            return res.send(403);
           }
           req.session.user = user;
           return res.json(user);
@@ -331,7 +325,6 @@ require('./config').getConfig(function(err, config) {
     * home menu
     **/
     app.get('/admin', checkAdmin, function(req, res){
-      console.log('GET /admin', req.session);
       if (req.session && req.session.user){
         return res.render('admin.ejs', {user:req.session.user});
       }
@@ -401,7 +394,6 @@ require('./config').getConfig(function(err, config) {
       }
 
       db.User.count({name:req.body.name}, function(errFind, count){
-        console.log('count players', {name:req.body.name}, errFind, count);
         if(err){
           return res.status(500).json({msg:err || 'unknown error #1'});
         }
