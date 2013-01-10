@@ -508,13 +508,13 @@ require('./config').getConfig(function(err, config) {
       },
       player:function(p){
          var article = {};
-        article.name = (p.firstname && p.firstname.length ? p.firstname.substring(0,1)+'.':'' )+ p.lastname;
+        article.name = (p.number ? p.number+'. ' : '')+(p.firstname && p.firstname.length ? p.firstname.substring(0,1)+'.':'' )+ p.lastname;
         article.description = '';
-        if (p.number){
+        /*if (p.number){
           article.description += '#'+p.number+'. ';
-        }
+        }*/
         if (p.position){
-          article.description += '('+p.position+')';
+          article.description += p.position;
         }
         if (p.club){
           article.description += ", "+p.club;
