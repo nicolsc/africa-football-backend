@@ -157,7 +157,6 @@ require('./config').getConfig(function(err, config) {
 
           */
           if (!_.find(data, function(item, key){console.log(item, player);return item.name==player.team;})){
-            console.log('x', data);
             data.push({name:player.team, description:'Coming soon...'});
           }
           data.push(schemaIO.player(player));
@@ -522,7 +521,9 @@ require('./config').getConfig(function(err, config) {
           article.description += ", "+p.club;
         }
 
-        article.dateCreated = p.dob;
+        //article.dateCreated = p.dob;
+        console.log(p)
+        article.dob = p.dob;
         article.image = p.image;
 
         /* still need them..*/
