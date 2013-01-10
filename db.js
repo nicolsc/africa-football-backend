@@ -29,6 +29,7 @@ exports.getDb = function(cb){
 			firstname:String,
 			lastname:{type:String, required:true},
 			position:String,
+			positionPriority:Number,// GK:1, DF:2, ...
 			dob:Date,
 			club:String,
 			number:Number,
@@ -57,6 +58,12 @@ exports.getDb = function(cb){
 			}
 		})
 	};
+
+	schemas.player.pre('save', function(next){
+		var priorities = {GK:1, DF:2, MF:2, FW:2};
+		this.positionPriority = priorities[this.position] || 9;
+		next();
+	});
 
 	schemas.user.methods.checkPassword = function(input, callback) {
 		bcrypt.compare(input, this.password, function(err, result) {
