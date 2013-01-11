@@ -67,7 +67,7 @@ exports.getDb = function(cb){
 	};
 
 	schemas.player.pre('save', function(next){
-		var priorities = {GK:1, DF:2, MF:2, FW:2};
+		var priorities = {GK:1, DF:2, MF:3, FW:4};
 		this.positionPriority = priorities[this.position] || 9;
 		next();
 	});
