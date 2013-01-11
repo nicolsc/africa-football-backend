@@ -15,6 +15,9 @@
               params[item.id] = item.value;
             }
           });
+          if (params.date && new Date(params.date)=='Invalid Date'){
+            delete params.date;
+          }
           if ($('#new-fixture #id').val()){
             params.id = $('#new-fixture #id').val();
             return editFixture(params);
@@ -124,7 +127,7 @@
           <td class='stage'><%=fixture.stage%></td>
           <td class='team1'><%=fixture.team1%></td>
           <td class='team2'><%=fixture.team2%></td>
-          <td class='date'><%=fixture.startDate && fixture.startDate.toLocaleString()%></td>
+          <td class='date'><%=fixture.startDate && new Date(fixture.startDate).toLocaleString()%></td>
           <td class='score'><%=fixture.score%></td>
           <td><button class="btn-del" data-id="<%=fixture.id%>">Delete</button>&nbsp;<button class="btn-edit" data-id='<%=fixture.id%>'>Edit</button></td>
         </tr>

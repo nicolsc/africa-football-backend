@@ -16,7 +16,9 @@
               params[item.id] = item.value;
             }
           });
-          console.log('params', params)
+          if (params.dob && new Date(params.dob)=='Invalid Date'){
+            delete params.dob;
+          }
           if ($('#new-player #id').val()){
             params.id = $('#new-player #id').val();
             return editplayer(params);
