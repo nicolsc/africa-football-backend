@@ -72,6 +72,7 @@ exports.getDb = function(cb){
 		next();
 	});
 
+
 	schemas.user.methods.checkPassword = function(input, callback) {
 		bcrypt.compare(input, this.password, function(err, result) {
 			if (err) return cb(err);

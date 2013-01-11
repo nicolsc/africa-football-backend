@@ -32,6 +32,10 @@ require('./config').getConfig(function(err, config) {
   require('./db').getDb(function(err,db){
     
     db.mongoose.connect(config.MONGODB);
+    db.mongoose.connection.on('error', function(err){
+      //should handle mongo errors here..
+      console.log('mongoose error', err);
+    });
 
     // Create HTTP server
     var app = express();
