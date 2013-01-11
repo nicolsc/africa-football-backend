@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Africa Football - support</title>
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
+    <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		$('.support-form').on('click', '#btn-submit', function(evt){
+	    	  var params={};
+          ['name', 'email', 'platform', 'device', 'question'].forEach(function(item, key){
+            if ($('#'+item).val()){
+              params[item] = $('#'+item).val();
+            }
+          });
+          params.question = params.question ? params.question.replace(/Type your question here/, '') : null;
+          if (!params.email || !params.question){
+            return error('Please provide at least your email & a question');
+          }
+
+          $.ajax({type:'POST', url:'/support', data:params, success:success, error:error});
+        });
+        $('.support-form #question').on('focus', function(evt){
+          if (this.value = 'Type your question here'){
+            this.value='';
+          }
+        });
+        $(document).on('keypress', function(evt){
+          if (evt.keyCode==13){
+            $('#btn-submit').click();
+          }
+        });
+      });
+      function success(input){
+          var msg = '';
+          if (typeof input == 'string'){
+            msg = input;
+          }
+          else{
+            msg = input.msg;
+          }
+          $('#result').removeClass('error').addClass('success').html(msg).show().fadeOut(3000);
+      }
+      function error(err){
+        var timer=3000;
+        var msg = '';
+        if (typeof err == 'string'){
+          msg = err;
+        }
+        else{
+          msg = 'Error  '+err.status && err.status>0  ? (err.status +' '+err.statusText) : ' request failed';
+        }
+        $('#result').addClass('error').removeClass('success').html(msg).show();//.fadeOut(timer);
+        setTimeout(function(){
+          $('#result').html('').hide();
+        }, timer);
+      }
+    </script>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body class="supportform">
+    <h1>Africa Football</h1>
+    <h2>Support</h2>
+    <div class="desc">
+      Please contact us if you need any information or help about the Africa Football app.<br />
+      Fill in the following form, and we'll get in touch shortly.
+    </div>
+    <div id="result"></div>
+    <div class="support-form">
+      <div>
+          <div class="label"><label for='name'>Name</label></div><input type="text" id="name" />
+      </div>
+      <div>
+          <div class="label"><label for='email'>Email</label></div><input type="email" id="email" />
+      </div>
+      <div>
+          <div class="label"><label for='platform'>Platform</label></div>
+          <select id="platform">
+            <option value="">Choose</option>
+            <option value="iOS">iOS</option>
+            <option value="android">Android</option>
+          </select>
+      </div>
+      <div>
+        <div class="label"><label for="device">Device</label></div><input type="text" id="device" />
+      </div>
+      <div>
+        <textarea id="question">Type your question here</textarea>
+      </div>
+      <div class="buttons">
+        <button id="btn-submit">OK</button>
+      </div>
+    </div>
+  </body>
+</html>

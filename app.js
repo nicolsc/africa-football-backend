@@ -63,7 +63,12 @@ require('./config').getConfig(function(err, config) {
 
     });
 
-   
+   /**
+   * GET /support alias for /support.html
+   **/
+   app.get('/support', function(req, res){
+    res.sendfile('./public/support.html');
+   });
     /**
     * GET /fixtures
     * List all fixtures
