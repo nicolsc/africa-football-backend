@@ -140,7 +140,7 @@ require('./config').getConfig(function(err, config) {
       }
       var data =[];
       var tmp;
-      db.Player.find({},null, {sort:{team:1, positionPriority:1,  lastname:1, firstname:1}}).exec(function(err, players){
+      db.Player.find({},null, {sort:{team:1, positionPriority:1, number:1, lastname:1, firstname:1}}).exec(function(err, players){
         if (err){
           return res.status(500).jsonp({msg:'An error occured : '+err});
         }
