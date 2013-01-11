@@ -63,9 +63,7 @@ require('./config').getConfig(function(err, config) {
 
     });
 
-    app.get('/support', function(req, res){
-      res.send('Coming soon - contact form');
-    });
+   
     /**
     * GET /fixtures
     * List all fixtures
@@ -167,7 +165,19 @@ require('./config').getConfig(function(err, config) {
       
     });
 
-
+    /**
+    * POST /support
+    **/
+    app.post('/support', function(req, res){
+     
+      var supportComment = new db.SupportComment(req.body);
+      supportComment.save(function(err){
+        if (err){
+          return res.status(500).json({msg:err});
+        }
+        return res.status(200).json({msg:'Your comment was successfully posted'});//json(supportComment);
+      });
+    });
 
     /**
     * POST /fixtures

@@ -56,6 +56,13 @@ exports.getDb = function(cb){
 					admin:Boolean
 				}
 			}
+		}),
+		supportComment:new mongoose.Schema({
+			name:String,
+			email:{type:String, index:true},
+			platform:{type:String, index:true},
+			device:String,
+			question:String
 		})
 	};
 
@@ -76,6 +83,7 @@ exports.getDb = function(cb){
 		Fixture: mongoose.model('Fixture',schemas.fixture),
 		Player: mongoose.model('Player', schemas.player),
 		User: mongoose.model('User', schemas.user),
+		SupportComment: mongoose.model('SupportComment', schemas.supportComment),
 		mongoose:mongoose,
 		MongoStore:MongoStore
 	};

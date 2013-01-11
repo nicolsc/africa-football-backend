@@ -1,5 +1,5 @@
 body {
-  margin: 5px;
+  margin: 10px;
   position: relative;
   background: #e1e3e8;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -61,6 +61,11 @@ th, td{
   border:1px solid #999;
   padding: 2px;
 }
+textarea{
+  width:300px;
+  height:80px;
+  margin-left:160px;
+}
 input[type=text]{
   width:80px;
 }
@@ -73,6 +78,10 @@ input#dob, input#date, input#image{
 .buttons{
   text-align: center;
 }
+.desc{
+  margin:30px;
+}
+
 div.label{
   display: inline-block;
   width:150px;
@@ -83,17 +92,23 @@ div.label{
   margin:10% 0 0 35%;
   width:300px;
 }
-.smallform #result{
+.smallform #result, .supportform #result{
   width:100%;
   margin-left: 0;
 }
 .smallform .buttons{
   margin-top: 10px;
 }
-.login-form input[type=text], .register-form input[type=text], .login-form input[type=password], .register-form input[type=password]{
+input[type=text],input[type=password], input[type=email]{
   width:110px;
 }
-
+.supportform{
+  width:640px;
+  margin:5% 0 0 15%;
+}
+.player .image img{
+  max-height:100px;
+}
 
 button {
   background-color: #759ae9;
