@@ -64,9 +64,7 @@ require('./config').getConfig(function(err, config) {
       app.use(express.methodOverride());
       app.use(express.static('public'));
       app.engine('html', require('ejs').renderFile);
-
     });
-
    /**
    * GET /support alias for /support.html
    **/
