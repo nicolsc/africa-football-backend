@@ -1,1 +1,1 @@
-node ./import_squads.js
+node ./scripts/import_results.js
