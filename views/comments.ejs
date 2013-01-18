@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Support comments</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>Support comments</h1>
+     <% if (comments && comments.length){%>
+    <table id="comments">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Platform</th>
+          <th>Device</th>
+          <th>Message</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% comments.forEach(function(comment, idx){%>
+        <tr class='comment'>
+          <td><%=idx+1%>.</td>
+          <td class='stage'><%=comment.name%></td>
+          <td class='team1'><%=comment.email%></td>
+          <td class='team2'><%=comment.platform%></td>
+          <td class='date'><%=comment.device%></td>
+          <td class='date'><%=comment.question%></td>
+          <td>&nbsp;</td>
+        </tr>
+
+    <%}); %>
+       
+      </tbody>
+    </table>
+    <% }
+  else{%>
+    <h3>Nothing yet</h3>
+  <%}%>
+  </body>
+</html>

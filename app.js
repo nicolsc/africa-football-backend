@@ -429,6 +429,16 @@ require('./config').getConfig(function(err, config) {
 
     });
 
+    /*
+    * GET /admin/comments
+    * View user comments, posted on the support page
+    **/
+    app.get('/admin/comments', checkAdmin, function(req, res){
+      db.SupportComment.find({}, function(err, comments){
+        res.render('comments.ejs', {err:err, comments:comments});
+      });
+    });
+
     /**
     * GET /users
     **/
