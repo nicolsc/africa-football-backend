@@ -4,11 +4,12 @@
 
 Minimalist backend, to serve data for a Joshfire Factory app   (http://factory.joshfire.com)
 The application is featuring African Cup of Nations 2013 data  
-	News : Using Joshfire Factory's Google News datasource
-	Twitter : Using Joshfire Factory's Twitter datasource
-	Fixtures : Using this app /fixtures JSON feed
-	Videos : Using Joshfire Factory's Youtube & dailymotion datasources
-	Squads : Using this app /squads JSON feed
+
+* News : Using Joshfire Factory's Google News datasource
+*	Twitter : Using Joshfire Factory's Twitter datasource
+*	Fixtures : Using this app /fixtures JSON feed
+*	Videos : Using Joshfire Factory's Youtube & dailymotion datasources
+*	Squads : Using this app /squads JSON feed
 
 
 ##Dependencies
