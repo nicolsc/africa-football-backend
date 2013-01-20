@@ -89,6 +89,19 @@ var findGame = function (db, game, callback){
 			console.log('problem : several games looking like', game);
 			return callback();
 		}
+		/* if game was reversed, need to adjust score */
+		if (game.reverse){
+			var tmpScore = game.score.split(' - ');
+			if (tmpScore.length && tmpScore.length > 1){
+				tmpScore[1] = tmpScore[1].split(' ');
+				game.score = tmpScore[1][0] + ' - '+tmpScore[0];
+				if (tmpScore[1].length > 1){
+					tmpScore[1].shift();
+					game.score += ' - '+tmpScore.join(' ');
+				}
+			}
+		}		
+
 		docs[0].score=game.score;
 		docs[0].save(function(err){
 			callback();
