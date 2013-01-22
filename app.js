@@ -66,7 +66,18 @@ require('./config').getConfig(function(err, config) {
       app.engine('html', require('ejs').renderFile);
     });
 
+
+  /**
+  * GET anything
+  * Log connection ip
+  **/
   app.get('*', function(req, res, next){
+
+    /*no need to log /admin stuff*/
+    if (req.path.match(/^\/admin/)){
+      return next();
+    }
+
     var ip = req.header('x-forwarded-for') ? req.header('x-forwarded-for').split(', ')[0] : req.connection.remoteAddress;
     var connectionLog = new db.ConnectionLog({date:new Date(), path:req.path, ip:ip});
     connectionLog.save(function(err){
