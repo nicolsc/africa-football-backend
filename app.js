@@ -65,11 +65,24 @@ require('./config').getConfig(function(err, config) {
       app.use(express.static('public'));
       app.engine('html', require('ejs').renderFile);
     });
+
+  app.get('*', function(req, res, next){
+    var ip = req.header('x-forwarded-for') ? req.header('x-forwarded-for').split(', ')[0] : req.connection.remoteAddress;
+    var connectionLog = new db.ConnectionLog({date:new Date(), path:req.path, ip:ip});
+    connectionLog.save(function(err){
+      if (err){
+        console.log('error saving log');
+      }
+      next();
+    });
+  });
+
+
    /**
    * GET /support alias for /support.html
    **/
-   app.get('/support', function(req, res){
-    res.sendfile('./public/support.html');
+   app.get('/support?:ext', function(req, res){
+    res.sendfile('./views/support.html');
    });
     /**
     * GET /fixtures
