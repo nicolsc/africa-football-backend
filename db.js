@@ -63,7 +63,8 @@ exports.getDb = function(cb){
 			email:{type:String, index:true},
 			platform:{type:String, index:true},
 			device:String,
-			question:String
+			question:String,
+			ipAddress:String
 		}),
 		connectionLog:new mongoose.Schema({
 			date:Date,

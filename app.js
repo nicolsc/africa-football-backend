@@ -190,7 +190,7 @@ require('./config').getConfig(function(err, config) {
     **/
     app.post('/support', function(req, res){
      
-      var supportComment = new db.SupportComment(req.body);
+      var supportComment = new db.SupportComment(_.extend({ipAddress:req.header('x-forwarded-for') ? req.header('x-forwarded-for').split(', ')[0] : req.connection.remoteAddress}, req.body));
       supportComment.save(function(err){
         if (err){
           return res.status(500).json({msg:err});

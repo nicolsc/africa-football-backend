@@ -19,7 +19,7 @@
           <th>Platform</th>
           <th>Device</th>
           <th>Message</th>
-          <th>&nbsp;</th>
+          <th>IP</th>
         </tr>
       </thead>
       <tbody>
@@ -27,12 +27,12 @@
         <tr class='comment'>
           <td><%=idx+1%>.</td>
           <td><%= comment.date ? comment.date.toString() : ''%></td>
-          <td class='stage'><%=comment.name%></td>
-          <td class='team1'><%=comment.email%></td>
-          <td class='team2'><%=comment.platform%></td>
-          <td class='date'><%=comment.device%></td>
-          <td class='date'><%=comment.question%></td>
-          <td>&nbsp;</td>
+          <td><%=comment.name%></td>
+          <td><%=comment.email%></td>
+          <td><%=comment.platform%></td>
+          <td><%=comment.device%></td>
+          <td><%=comment.question%></td>
+          <td><%=comment.ipAddress%></td>
         </tr>
 
     <%}); %>
