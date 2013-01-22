@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Support logs</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>Connection Logs</h1>
+     <% if (logs && logs.length){%>
+    <table id="logs">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Path</th>
+          <th>IP</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% logs.forEach(function(log, idx){%>
+        <tr class='log'>
+          <td><%=idx+1%>.</td>
+          <td><%= log.date ? log.date.toString() : ''%></td>
+          <td><%=log.path%></td>
+          <td><%=log.ip%></td>
+        </tr>
+
+    <%}); %>
+       
+      </tbody>
+    </table>
+    <% }
+  else{%>
+    <h3>Nothing yet</h3>
+  <%}%>
+  </body>
+</html>

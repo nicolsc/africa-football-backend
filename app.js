@@ -447,15 +447,24 @@ require('./config').getConfig(function(err, config) {
     * View user comments, posted on the support page
     **/
     app.get('/admin/comments', checkAdmin, function(req, res){
-      db.SupportComment.find({}, function(err, comments){
+      db.SupportComment.find({},{}, {sort:{date:-1}}, function(err, comments){
         res.render('comments.ejs', {err:err, comments:comments});
       });
     });
 
-    /**
-    * GET /users
+    /*
+    * GET /admin/logs
     **/
-    app.get('/users', checkAdmin, function(req, res){
+    app.get('/admin/logs', checkAdmin, function(req, res){
+      db.ConnectionLog.find({},{}, {sort:{date:-1}}, function(err, logs){
+        res.render('logs.ejs', {err:err, logs:logs});
+      });
+    });
+
+    /**
+    * GET /admin/users
+    **/
+    app.get('/admin/users', checkAdmin, function(req, res){
       db.User.find({}).exec(function(err, users){
         if (err){
           return res.status(500);
@@ -581,7 +590,10 @@ require('./config').getConfig(function(err, config) {
 
     };
 
-    
+    app.get('/favicon.ico', function(req, res, next){
+      res.send(404);
+      next();
+    });
 
     app.use(function(req, res, next){
       return fourofour(req, res);

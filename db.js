@@ -64,6 +64,11 @@ exports.getDb = function(cb){
 			platform:{type:String, index:true},
 			device:String,
 			question:String
+		}),
+		connectionLog:new mongoose.Schema({
+			date:Date,
+			ip:String,
+			path:String
 		})
 	};
 
@@ -92,6 +97,7 @@ exports.getDb = function(cb){
 		Player: mongoose.model('Player', schemas.player),
 		User: mongoose.model('User', schemas.user),
 		SupportComment: mongoose.model('SupportComment', schemas.supportComment),
+		ConnectionLog:mongoose.model('ConnectionLog', schemas.connectionLog),
 		mongoose:mongoose,
 		MongoStore:MongoStore
 	};
