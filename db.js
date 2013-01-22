@@ -59,6 +59,7 @@ exports.getDb = function(cb){
 		}),
 		supportComment:new mongoose.Schema({
 			name:String,
+			date:{type:Date},
 			email:{type:String, index:true},
 			platform:{type:String, index:true},
 			device:String,
@@ -69,6 +70,12 @@ exports.getDb = function(cb){
 	schemas.player.pre('save', function(next){
 		var priorities = {GK:1, DF:2, MF:3, FW:4};
 		this.positionPriority = priorities[this.position] || 9;
+		next();
+	});
+
+	schemas.supportComment.pre('save', function(next, done){
+		console.log('supportComment', 'pre save');
+		this.date = new Date();
 		next();
 	});
 

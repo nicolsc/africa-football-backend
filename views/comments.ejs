@@ -13,6 +13,7 @@
       <thead>
         <tr>
           <th>#</th>
+          <th>Date</th>
           <th>Name</th>
           <th>Email</th>
           <th>Platform</th>
@@ -25,6 +26,7 @@
       <% comments.forEach(function(comment, idx){%>
         <tr class='comment'>
           <td><%=idx+1%>.</td>
+          <td><%= comment.date ? comment.date.toString() : ''%></td>
           <td class='stage'><%=comment.name%></td>
           <td class='team1'><%=comment.email%></td>
           <td class='team2'><%=comment.platform%></td>
