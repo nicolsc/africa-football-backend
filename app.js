@@ -74,7 +74,7 @@ require('./config').getConfig(function(err, config) {
   app.get('*', function(req, res, next){
 
     /*no need to log /admin stuff*/
-    if (req.path.match(/^\/admin/)){
+    if (req.path.match(/(^\/admin)|(^\/login$)/)){
       return next();
     }
 
@@ -471,11 +471,45 @@ require('./config').getConfig(function(err, config) {
         res.render('logs.ejs', {err:err, logs:logs});
       });
     });
+    /**
+    * GET /admin/stats
+    * Get basic stats
+    **/
+    app.get('/admin/stats', function(req, res){
+      db.ConnectionLog.find({}, function(err, data){
+        var stats = {};
+
+        /* Sort by path */
+        stats.paths = _.sortBy(
+                        _.map(
+                          _.countBy(data, 'path'),
+                          function(count, path){
+                            return {path:path, count:count};
+                          }
+                        ),
+                        function(item){
+                          return -item.count;
+                        }
+                      );
+        console.log(stats);
+        res.render('stats.ejs', {err:err, stats:stats});
+      });
+    });
 
     /**
     * GET /admin/users
+    * View users list (ejs tpl)
     **/
     app.get('/admin/users', checkAdmin, function(req, res){
+      db.User.find({}).exec(function(err, users){
+        res.render('users.ejs', {err:err, users:users});
+      });
+    });
+    /**
+    * GET /users
+    * users list (json)
+    **/
+    app.get('/users', checkAdmin, function(req, res){
       db.User.find({}).exec(function(err, users){
         if (err){
           return res.status(500);
@@ -507,6 +541,9 @@ require('./config').getConfig(function(err, config) {
         user.name = req.body.name;
         user.salt = bcrypt.genSaltSync(10);
         user.password = bcrypt.hashSync(req.body.password, user.salt);
+
+        user.registrationIP = req.header('x-forwarded-for') ? req.header('x-forwarded-for').split(', ')[0] : req.connection.remoteAddress;
+
         db.User.create(user, function(err, doc){
           if (err || !doc){
             return res.status(500).json({msg:err || 'unknown error #2'});
