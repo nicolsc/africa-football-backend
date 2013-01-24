@@ -38,7 +38,9 @@ exports.getDb = function(cb){
 		user:new mongoose.Schema({
 			name:{type:String, required: true, index: { unique: true } },
 			password:{type:String, required:true},
-			admin:Boolean
+			admin:Boolean,
+			createdDate:Date,
+			registrationIP:String//IP address used to register
 		}),
 		session:new mongoose.Schema({
 			_id:String,
@@ -82,6 +84,12 @@ exports.getDb = function(cb){
 	schemas.supportComment.pre('save', function(next, done){
 		console.log('supportComment', 'pre save');
 		this.date = new Date();
+		next();
+	});
+
+	schemas.user.pre('save', function(next, done){
+		console.log('supportComment', 'pre save');
+		this.createdDate = new Date();
 		next();
 	});
 
