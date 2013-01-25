@@ -491,7 +491,37 @@ require('./config').getConfig(function(err, config) {
                           return -item.count;
                         }
                       );
-        console.log(stats);
+        
+        stats.dates = _.sortBy(
+                        _.map(
+                          _.countBy(data,
+                            function(item){
+                              return dateformat(item.date, 'dd/mm/yyyy');
+                            }
+                          ),
+                          function(count, date){
+                            return {date:date, count:count};
+                          }
+                        ),
+                        function(item){
+                          return -item.count;
+                        }
+                      );
+         stats.hours = _.sortBy(
+                        _.map(
+                          _.countBy(data,
+                            function(item){
+                              return dateformat(item.date, 'HH:00');
+                            }
+                          ),
+                          function(count, hour){
+                            return {hour:hour, count:count};
+                          }
+                        ),
+                        function(item){
+                          return -item.count;
+                        }
+                      );
         res.render('stats.ejs', {err:err, stats:stats});
       });
     });

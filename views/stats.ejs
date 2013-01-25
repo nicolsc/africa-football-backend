@@ -9,7 +9,9 @@
   <body>
     <h1>Connection stats</h1>
     <% if (stats){%>
-      <% if (stats.paths && Object.keys && Object.keys(stats.paths).length){%>
+      <% if (stats.paths && stats.paths.length){%>
+      <div class='float left'>
+        <h2>Popular request</h2>
         <table id="stats-paths">
           <thead>
             <tr>
@@ -27,6 +29,51 @@
           <%}); %>
           </tbody>
         </table>
+      </div>
+      <% } %>
+      <% if (stats.dates && stats.dates.length){%>
+      <div class='float left'>
+        <h2>Requests by date</h2>
+        <table id="stats-dates">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Hits</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% stats.dates.forEach(function(item){%>
+            <tr class='stat-path'>
+              <td><%=item.date%></td>
+              <td><%=item.count%></td>
+            </tr>
+
+          <%}); %>
+          </tbody>
+        </table>
+      </div>
+      <% } %>
+       <% if (stats.hours && stats.hours.length){%>
+      <div class='float left'>
+        <h2>Requests by hours</h2>
+        <table id="stats-hours">
+          <thead>
+            <tr>
+              <th>Hour</th>
+              <th>Hits</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% stats.hours.forEach(function(item){%>
+            <tr class='stat-path'>
+              <td><%=item.hour%></td>
+              <td><%=item.count%></td>
+            </tr>
+
+          <%}); %>
+          </tbody>
+        </table>
+      </div>
       <% } %>
     <% }
     else{%>

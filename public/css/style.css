@@ -109,6 +109,10 @@ input[type=text],input[type=password], input[type=email]{
 .player .image img{
   max-height:100px;
 }
+.float.left{
+  float:left;
+  margin-left:30px;
+}
 
 button {
   background-color: #759ae9;
