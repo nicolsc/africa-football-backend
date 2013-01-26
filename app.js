@@ -475,7 +475,7 @@ require('./config').getConfig(function(err, config) {
     * GET /admin/stats
     * Get basic stats
     **/
-    app.get('/admin/stats', function(req, res){
+    app.get('/admin/stats', checkAdmin, function(req, res){
       db.ConnectionLog.find({}, function(err, data){
         var stats = {};
 
