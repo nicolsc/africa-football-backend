@@ -422,7 +422,7 @@ require('./config').getConfig(function(err, config) {
 
     app.get('/admin/fixtures', checkAdmin, function(req, res){
 
-      db.Fixture.find({},null, {sort:{date:1}}, function(err, fixtures){
+      db.Fixture.find({},null, {sort:{date:-1}}, function(err, fixtures){
         var data=[];
         _.each(fixtures, function(item){
           data.push(schemaIO.fixture(item));
