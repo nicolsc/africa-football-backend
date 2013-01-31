@@ -491,7 +491,7 @@ require('./config').getConfig(function(err, config) {
                           return -item.count;
                         }
                       );
-        
+
         stats.dates = _.sortBy(
                         _.map(
                           _.countBy(data,
@@ -507,7 +507,37 @@ require('./config').getConfig(function(err, config) {
                           return -item.count;
                         }
                       );
-         stats.hours = _.sortBy(
+        stats.graph = _.sortBy(
+                        _.map(
+                          _.countBy(data,
+                            function(item){
+                              return dateformat(item.date, 'dd/mm/yyyy');
+                            }
+                          ),
+                          function(count, date){
+                            return {date:date, count:count};
+                          }
+                        ),
+                        function(item){
+                          return item.date.split('/').reverse().join('/');
+                        }
+                      );
+        /* graph  : fill in missing days (O hits) */
+        var start = new Date(stats.graph[0].date.split('/').reverse().join('-')).getTime();
+        var end = new Date(stats.graph[stats.graph.length-1].date.split('/').reverse().join('-')).getTime();
+        var datesWithValues = _.pluck(stats.graph, 'date');
+        var current = start;
+        while (current < end){
+          if (!_.contains(datesWithValues, dateformat(current, 'dd/mm/yyyy'))){
+            stats.graph.push({date:dateformat(current,'dd/mm/yyyy'), count:0});
+          }
+          current += 3600000*24;
+
+        }
+        /* graph : sort again by date, as the 0-hits days are at the end of the array */
+        stats.graph = _.sortBy(stats.graph, 'date');
+
+        stats.hours = _.sortBy(
                         _.map(
                           _.countBy(data,
                             function(item){
