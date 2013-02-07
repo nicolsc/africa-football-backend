@@ -9,6 +9,13 @@
   <body>
     <h1>Connection stats</h1>
     <% if (stats){%>
+      <% if (stats.graph && stats.graph.length){%>
+        <pre>
+          <% stats.graph.forEach(function(item){%>
+            <%= item.date+' : '+item.count%>
+          <% });%>
+        </pre>
+      <% } %>
       <% if (stats.paths && stats.paths.length){%>
       <div class='float left'>
         <h2>Popular request</h2>
