@@ -21,8 +21,8 @@ else{
 				{game:'.itm', home:'.clubeq:first', away:'.clubeq:last', score:'.score_unique'},
 				importGames);
 	*/
-	getGamesFromWebPages(['http://www.lequipe.fr/Football/FootballResultatGroupe5452.html', //Quarter-finals
-				'http://www.lequipe.fr/Football/FootballResultatGroupe5453.html', //Semi finals
+	getGamesFromWebPages([//'http://www.lequipe.fr/Football/FootballResultatGroupe5452.html', //Quarter-finals
+				//'http://www.lequipe.fr/Football/FootballResultatGroupe5453.html', //Semi finals
 				'http://www.lequipe.fr/Football/FootballResultat44318.html',//third place game
 				'http://www.lequipe.fr/Football/FootballResultat44317.html'], //Final
 				{game:".content .ligne", home:'.equipeDom', away:'.equipeExt', score:'.score'},
@@ -101,7 +101,7 @@ function importGames(games){
 
 function findGame(db, game, callback){
 
-	db.Fixture.find({team1:game.team1, team2:game.team2}, null, {}).exec(function(err, docs){
+	db.Fixture.find({team1:game.team1, team2:game.team2, score:{$or:['', 'undefined']}}, null, {}).exec(function(err, docs){
 		if (err){
 			console.log('error while finding game', game, err);
 			return callback();
