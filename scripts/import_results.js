@@ -101,7 +101,7 @@ function importGames(games){
 
 function findGame(db, game, callback){
 
-	db.Fixture.find({team1:game.team1, team2:game.team2, score:{$or:['', 'undefined']}}, null, {}).exec(function(err, docs){
+	db.Fixture.find({team1:game.team1, team2:game.team2, score:{$in:['', 'undefined']}}, null, {}).exec(function(err, docs){
 		if (err){
 			console.log('error while finding game', game, err);
 			return callback();
